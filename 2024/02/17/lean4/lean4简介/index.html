@@ -20,15 +20,15 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"qiu233.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.19.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="lean4是一个proof assistant兼函数式语言，我不打算大段大段地照搬官方文档，这篇文章只作为简介，我会挑几个个人认为很重要的点来说。 Lean4的类型层次语法a : A表示a的类型是A，例如0 : Nat表示0的类型是Nat。 Lean4的类型的层次结构是Sort 0 : Sort 1 : Sort 2 : ...，其中Sort 0的别称是Prop，Sort 1的别称是Type或者T">
+    <meta name="description" content="lean4是一个proof assistant兼函数式语言，我不打算大段大段地照搬官方文档，这篇文章只作为简介，我会挑几个个人认为很重要的点来说。  Lean4的类型层次 语法a : A表示a的类型是A，例如0 : Nat表示0的类型是Nat。 Lean4的类型的层次结构是Sort 0 : Sort 1 : Sort 2 : ...，其中Sort 0的别称是Prop，Sort 1的别称是Type或">
 <meta property="og:type" content="article">
 <meta property="og:title" content="lean4简介">
 <meta property="og:url" content="https://qiu233.github.io/2024/02/17/lean4/lean4%E7%AE%80%E4%BB%8B/index.html">
 <meta property="og:site_name" content="Qiu的博客">
-<meta property="og:description" content="lean4是一个proof assistant兼函数式语言，我不打算大段大段地照搬官方文档，这篇文章只作为简介，我会挑几个个人认为很重要的点来说。 Lean4的类型层次语法a : A表示a的类型是A，例如0 : Nat表示0的类型是Nat。 Lean4的类型的层次结构是Sort 0 : Sort 1 : Sort 2 : ...，其中Sort 0的别称是Prop，Sort 1的别称是Type或者T">
+<meta property="og:description" content="lean4是一个proof assistant兼函数式语言，我不打算大段大段地照搬官方文档，这篇文章只作为简介，我会挑几个个人认为很重要的点来说。  Lean4的类型层次 语法a : A表示a的类型是A，例如0 : Nat表示0的类型是Nat。 Lean4的类型的层次结构是Sort 0 : Sort 1 : Sort 2 : ...，其中Sort 0的别称是Prop，Sort 1的别称是Type或">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-02-16T17:47:43.000Z">
-<meta property="article:modified_time" content="2024-02-16T20:28:19.330Z">
+<meta property="article:modified_time" content="2024-02-17T07:25:13.446Z">
 <meta property="article:author" content="Qiu">
 <meta property="article:tag" content="lean4">
 <meta property="article:tag" content="语言">
@@ -107,7 +107,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Lean4%E7%9A%84%E7%B1%BB%E5%9E%8B%E5%B1%82%E6%AC%A1"><span class="nav-number">1.</span> <span class="nav-text">Lean4的类型层次</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%87%AA%E7%84%B6%E6%8E%A8%E6%BC%94%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.</span> <span class="nav-text">自然推演系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Formation-Rules"><span class="nav-number">2.1.</span> <span class="nav-text">1.Formation Rules</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Introduction-Rules"><span class="nav-number">2.2.</span> <span class="nav-text">2.Introduction Rules</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Elimination-Rules"><span class="nav-number">2.3.</span> <span class="nav-text">3.Elimination Rules</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%88%80%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%87%BD%E6%95%B0%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.4.</span> <span class="nav-text">∀类型和函数类型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Propositions-as-Types"><span class="nav-number">3.</span> <span class="nav-text">Propositions as Types</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#lean4%E7%9A%84%E7%B1%BB%E5%9E%8B%E5%B1%82%E6%AC%A1"><span class="nav-number">1.</span> <span class="nav-text"> Lean4的类型层次</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%87%AA%E7%84%B6%E6%8E%A8%E6%BC%94%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.</span> <span class="nav-text"> 自然推演系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1formation-rules"><span class="nav-number">2.1.</span> <span class="nav-text"> 1.Formation Rules</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2introduction-rules"><span class="nav-number">2.2.</span> <span class="nav-text"> 2.Introduction Rules</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3elimination-rules"><span class="nav-number">2.3.</span> <span class="nav-text"> 3.Elimination Rules</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%87%BD%E6%95%B0%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.4.</span> <span class="nav-text"> ∀类型和函数类型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#propositions-as-types"><span class="nav-number">3.</span> <span class="nav-text"> Propositions as Types</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -120,12 +120,12 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -182,7 +182,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2024-02-17 01:47:43 / 修改时间：04:28:19" itemprop="dateCreated datePublished" datetime="2024-02-17T01:47:43+08:00">2024-02-17</time>
+      <time title="创建时间：2024-02-17 01:47:43 / 修改时间：15:25:13" itemprop="dateCreated datePublished" datetime="2024-02-17T01:47:43+08:00">2024-02-17</time>
     </span>
 
   
@@ -195,28 +195,38 @@
     
     
     <div class="post-body" itemprop="articleBody"><p>lean4是一个proof assistant兼函数式语言，我不打算大段大段地照搬官方文档，这篇文章只作为简介，我会挑几个个人认为很重要的点来说。</p>
-<h1 id="Lean4的类型层次"><a href="#Lean4的类型层次" class="headerlink" title="Lean4的类型层次"></a>Lean4的类型层次</h1><p>语法<code>a : A</code>表示a的类型是A，例如<code>0 : Nat</code>表示0的类型是Nat。</p>
+<h1 id="lean4的类型层次"><a class="markdownIt-Anchor" href="#lean4的类型层次"></a> Lean4的类型层次</h1>
+<p>语法<code>a : A</code>表示a的类型是A，例如<code>0 : Nat</code>表示0的类型是Nat。</p>
 <p>Lean4的类型的层次结构是<code>Sort 0 : Sort 1 : Sort 2 : ...</code>，其中<code>Sort 0</code>的别称是<code>Prop</code>，<code>Sort 1</code>的别称是<code>Type</code>或者<code>Type 0</code>，而之后的<code>Sort 2</code>是<code>Type 1</code>，以此类推。</p>
-<p>上面<code>Sort n</code>中的自然数n表示不同的universe，”普通的”类型比如Nat就落在<code>Sort 1</code>也就是<code>Type</code>当中，而<code>Prop</code>作为最低的Sort，有两个重要性质：  </p>
+<p>上面<code>Sort n</code>中的自然数n表示不同的universe，&quot;普通的&quot;类型比如Nat就落在<code>Sort 1</code>也就是<code>Type</code>当中，而<code>Prop</code>作为最低的Sort，有两个重要性质：</p>
 <ol>
-<li><code>Prop : Type</code>意味着Prop和Nat等”普通”类型一样可以在同一个universe中讨论</li>
-<li>相比于”普通”类型，Prop仍然是一个Sort，意味着在其universe下可以构造新类型，例如下面的代码<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">inductive Or (a b : Prop) : Prop where</span><br><span class="line">| inl (h : a) : Or a b</span><br><span class="line">| inr (h : b) : Or a b</span><br></pre></td></tr></table></figure>
-是lean4标准库中对析取连词的定义。<strong>注意这里是Or : Prop : Type，Or并不是一个Type，千万不要混淆！</strong></li>
+<li><code>Prop : Type</code>意味着Prop和Nat等&quot;普通&quot;类型一样可以在同一个universe中讨论</li>
+<li>相比于&quot;普通&quot;类型，Prop仍然是一个Sort，意味着在其universe下可以构造新类型，例如下面的代码</li>
 </ol>
-<h1 id="自然推演系统"><a href="#自然推演系统" class="headerlink" title="自然推演系统"></a>自然推演系统</h1><p>自然推演系统(Natural Deduction)是一个证明演算(proof calculus)系统，是lean4的基础，同样采用自然推演系统的还有Coq。简单来说有三种形式化的推理规则：</p>
-<h2 id="1-Formation-Rules"><a href="#1-Formation-Rules" class="headerlink" title="1.Formation Rules"></a>1.Formation Rules</h2><p>Formation Rules用于构造有效的term，在数学资料中会用类似这样</p>
-<script type="math/tex; mode=display">\frac{A \text{ prop}}{\neg A \text{ prop}}</script><p>的形式来表达，但在proof assistant中更复杂一些，由语法结构和类型、运算等定义直接规定。</p>
-<p>仍然以上面的$\neg$为例，在lean4中由两部分组成：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">inductive Or (a b : Prop) : Prop where</span><br><span class="line">| inl (h : a) : Or a b</span><br><span class="line">| inr (h : b) : Or a b</span><br></pre></td></tr></table></figure>
+<p>是lean4标准库中对析取连词的定义。<strong>注意这里是Or : Prop : Type，Or并不是一个Type，千万不要混淆！</strong></p>
+<h1 id="自然推演系统"><a class="markdownIt-Anchor" href="#自然推演系统"></a> 自然推演系统</h1>
+<p>自然推演系统(Natural Deduction)是一个证明演算(proof calculus)系统，是lean4的基础，同样采用自然推演系统的还有Coq。简单来说有三种形式化的推理规则：</p>
+<h2 id="1formation-rules"><a class="markdownIt-Anchor" href="#1formation-rules"></a> 1.Formation Rules</h2>
+<p>Formation Rules用于构造有效的term，在proof assistant中复杂一些，由语法结构和类型、运算等定义直接规定。</p>
+<p>以<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">¬</mi></mrow><annotation encoding="application/x-tex">\neg</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord">¬</span></span></span></span>为例，在lean4中由两部分组成：</p>
 <ol>
 <li>符号定义：<code>notation:max &quot;¬&quot; p:40 =&gt; Not p</code></li>
 <li>实际类型定义，此处是Not，代码如下<code>def Not (a : Prop) : Prop := a → False</code></li>
 </ol>
-<p>再以加法运算为例，符号定义是<code>macro_rules | `($x + $y)   =&gt; `(binop% HAdd.hAdd $x $y)</code>，hAdd的定义则是<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">class HAdd (α : Type u) (β : Type v) (γ : outParam (Type w)) where</span><br><span class="line">  hAdd : α → β → γ</span><br></pre></td></tr></table></figure></p>
+<p>再以加法运算为例，符号定义是<code>macro_rules | `($x + $y)   =&gt; `(binop% HAdd.hAdd $x $y)</code>，hAdd的定义则是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">class HAdd (α : Type u) (β : Type v) (γ : outParam (Type w)) where</span><br><span class="line">  hAdd : α → β → γ</span><br></pre></td></tr></table></figure>
 <p><em>lean4对于一般的term的formation rules没有统一的语法来描述。</em></p>
-<h2 id="2-Introduction-Rules"><a href="#2-Introduction-Rules" class="headerlink" title="2.Introduction Rules"></a>2.Introduction Rules</h2><p>Introduction Rules用于构造类型，除了∀类型的之外全都可认为是constructor，例如∃类型的定义如下<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">inductive Exists &#123;α : Sort u&#125; (p : α → Prop) : Prop where</span><br><span class="line">| intro (w : α) (h : p w) : Exists p</span><br></pre></td></tr></table></figure></p>
-<h2 id="3-Elimination-Rules"><a href="#3-Elimination-Rules" class="headerlink" title="3.Elimination Rules"></a>3.Elimination Rules</h2><p>与Introduction Rules刚好相反，Elimination Rules用于”拆解”类型，或者说指出了类型要如何被”使用”，在lean4中通常是定理的形式，还是以∃类型为例<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">theorem Exists.elim &#123;α : Sort u&#125; &#123;p : α → Prop&#125; &#123;b : Prop&#125;</span><br><span class="line">   (h₁ : Exists (fun x =&gt; p x)) (h₂ : ∀ (a : α), p a → b) : b :=</span><br><span class="line">  match h₁ with</span><br><span class="line">  | intro a h =&gt; h₂ a h</span><br></pre></td></tr></table></figure></p>
-<h2 id="∀类型和函数类型"><a href="#∀类型和函数类型" class="headerlink" title="∀类型和函数类型"></a>∀类型和函数类型</h2><p>待补充</p>
-<h1 id="Propositions-as-Types"><a href="#Propositions-as-Types" class="headerlink" title="Propositions as Types"></a>Propositions as Types</h1><p>待补充</p>
+<h2 id="2introduction-rules"><a class="markdownIt-Anchor" href="#2introduction-rules"></a> 2.Introduction Rules</h2>
+<p>Introduction Rules用于构造类型，除了∀类型的之外全都可认为是constructor，例如∃类型的定义如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">inductive Exists &#123;α : Sort u&#125; (p : α → Prop) : Prop where</span><br><span class="line">| intro (w : α) (h : p w) : Exists p</span><br></pre></td></tr></table></figure>
+<h2 id="3elimination-rules"><a class="markdownIt-Anchor" href="#3elimination-rules"></a> 3.Elimination Rules</h2>
+<p>与Introduction Rules刚好相反，Elimination Rules用于&quot;拆解&quot;类型，或者说指出了类型要如何被&quot;使用&quot;，在lean4中通常是定理的形式，还是以∃类型为例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">theorem Exists.elim &#123;α : Sort u&#125; &#123;p : α → Prop&#125; &#123;b : Prop&#125;</span><br><span class="line">   (h₁ : Exists (fun x =&gt; p x)) (h₂ : ∀ (a : α), p a → b) : b :=</span><br><span class="line">  match h₁ with</span><br><span class="line">  | intro a h =&gt; h₂ a h</span><br></pre></td></tr></table></figure>
+<h2 id="类型和函数类型"><a class="markdownIt-Anchor" href="#类型和函数类型"></a> ∀类型和函数类型</h2>
+<p>∀类型和函数类型在某种程度上是等价的</p>
+<h1 id="propositions-as-types"><a class="markdownIt-Anchor" href="#propositions-as-types"></a> Propositions as Types</h1>
+<p>待补充</p>
 
     </div>
 
@@ -239,6 +249,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2024/02/18/Monad%E6%98%AF%E4%BB%80%E4%B9%88/" rel="next" title="Monad是什么">
+                  Monad是什么 <i class="fa fa-angle-right"></i>
+                </a>
             </div>
           </div>
     </footer>
@@ -305,8 +318,7 @@
 
   
 
-  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
-<script src="/js/third-party/math/mathjax.js"></script>
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" integrity="sha256-UF1fgpAiu3tPJN/uCqEUHNe7pnr+QR0SQDNfgglgtcM=" crossorigin="anonymous">
 
 
 
