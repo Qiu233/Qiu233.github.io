@@ -28,7 +28,7 @@
 <meta property="og:description" content="Monad是自函子范畴上的幺半群。 这篇文章不扯太高大上的名词，力求通俗易懂地解释Monad在编程中是什么，由于语言组织能力欠佳，我将会从几个不同方面来分别解释。本文使用Haskell作示例，同时假设读者有C#的基础。  Unit类型 这一小节是前置知识，因为十分简单所以放在开头。 Unit类型十分类似C#的void，区别只在于C#并没有void这个类型，System.Void存在只是因为反射需要">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-02-17T17:58:40.000Z">
-<meta property="article:modified_time" content="2024-02-17T20:51:32.276Z">
+<meta property="article:modified_time" content="2024-02-17T21:16:12.371Z">
 <meta property="article:author" content="Qiu">
 <meta property="article:tag" content="math">
 <meta property="article:tag" content="Haskell">
@@ -108,7 +108,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#unit%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text"> Unit类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#statement%E5%92%8Cexpression"><span class="nav-number">2.</span> <span class="nav-text"> Statement和Expression</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%9A%84%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="nav-number">3.</span> <span class="nav-text"> 代码的执行顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%AF%E6%80%A7"><span class="nav-number">4.</span> <span class="nav-text"> 纯性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%8F%98%E6%80%A7%E5%92%8C%E5%90%8C%E4%B8%80%E5%BE%8B"><span class="nav-number">5.</span> <span class="nav-text"> 不变性和同一律</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#unit%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text"> Unit类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#statement%E5%92%8Cexpression"><span class="nav-number">2.</span> <span class="nav-text"> Statement和Expression</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%9A%84%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="nav-number">3.</span> <span class="nav-text"> 代码的执行顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%AF%E6%80%A7"><span class="nav-number">4.</span> <span class="nav-text"> 纯性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E7%94%A8%E9%80%8F%E6%98%8E%E6%80%A7"><span class="nav-number">5.</span> <span class="nav-text"> 引用透明性</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -183,7 +183,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2024-02-18 01:58:40 / 修改时间：04:51:32" itemprop="dateCreated datePublished" datetime="2024-02-18T01:58:40+08:00">2024-02-18</time>
+      <time title="创建时间：2024-02-18 01:58:40 / 修改时间：05:16:12" itemprop="dateCreated datePublished" datetime="2024-02-18T01:58:40+08:00">2024-02-18</time>
     </span>
 
   
@@ -223,20 +223,22 @@ Expr可以粗略地认为是一个值，但Expr通常不是完整的语句。<em
 <p>就会先求值<code>f 1</code>，代入运算符<code>&gt;&gt;=</code>右侧的变量<code>a</code>，再求值<code>g 2</code>，代入变量<code>b</code>，最后返回<code>a + b</code>的值。如果你对这里的<code>IO</code>、<code>&gt;&gt;=</code>和<code>pure</code>感到一头雾水，别担心，后面会详细地说明。</p>
 <p><em>note: <code>\x y -&gt; f x y</code>是Haskell中lambda表达式的语法，这里的例子是具有两个参数x和y的函数。</em></p>
 <h2 id="纯性"><a class="markdownIt-Anchor" href="#纯性"></a> 纯性</h2>
-<p>函数的纯性(purity)指的是函数不会产生任何外部的(全局的)状态变化，也就是没有任何副作用。</p>
+<p>函数的纯性(purity)指的是</p>
+<ol>
+<li>函数不会产生任何外部的(全局的)状态变化，也就是没有任何副作用。</li>
+<li>引用透明性，即函数调用可以直接按定义展开或替换为值相同的另一个具有引用透明性的函数调用，而结果不变。看起来有些拗口，可以看下一节。</li>
+</ol>
 <p>以C#为例，不纯的函数的一个例子是<code>Console.WriteLine</code>，不纯的原因是该函数会导致标准输出缓冲区发生变化，进而可能导致输出设备(例如说屏幕)发生变化，也就是会产生副作用。</p>
 <p>请理解并牢记这句话：<strong>Haskell的所有函数都是纯函数</strong>。<br />
 你可能会质疑：啊？你不是刚说完<code>Console.WriteLine</code>是不纯的吗？那Haskell的<code>putStrLn</code>怎么会是纯函数呢？<br />
-别急，<code>putStrLn</code>还真是纯函数，它的类型是<code>String -&gt; IO ()</code>，上文说它&quot;无返回值&quot;其实是错误的，它会把相同的<code>String</code>值映射到同一个<code>IO ()</code>的值上，只有当这个<code>IO ()</code>真正被执行时才会产生副作用，所以对该函数的求值是没有任何副作用的。<br />
-举例说明，<code>putStrLn &quot;a&quot;</code>和<code>putStrLn &quot;b&quot;</code>分别会得到一个不同的<code>IO ()</code>，但你无论怎样调用<code>putStrLn &quot;a&quot;</code>得到的<code>IO ()</code>都是同一个。</p>
+别急，<code>putStrLn</code>还真是纯函数，它的类型是<code>String -&gt; IO ()</code>，上文说它&quot;无返回值&quot;其实是错误的，它会把相同的<code>String</code>值映射到同一个<code>IO ()</code>的值上，只有当这个<code>IO ()</code>真正被执行时才会产生副作用，所以该函数纯的。<br />
+举例说明，<code>putStrLn &quot;a&quot;</code>和<code>putStrLn &quot;b&quot;</code>分别会得到一个不同的<code>IO ()</code>，但你无论怎样调用<code>putStrLn &quot;a&quot;</code>得到的<code>IO ()</code>都是同一个值。</p>
 <p>你可能又会质疑：你说的&quot;真正被执行&quot;是什么意思？要怎样执行一个<code>IO ()</code>？<br />
 答案十分简单：Haskell的入口点<code>main</code>函数的类型就是<code>IO ()</code>，程序中所有副作用的实际执行都归结到<code>main</code>函数的执行，而<code>main</code>的执行是编译器和运行时完成的，你只需要把一个<code>IO ()</code>交给<code>main</code>即可。例如下面的代码(例4.1)：</p>
 <figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">main</span> = putStrLn <span class="string">&quot;Hello World&quot;</span></span><br></pre></td></tr></table></figure>
 <p>执行后会输出&quot;Hello World&quot;，注意这里左右侧的类型是一致的。</p>
 <p>到这里仍然有一个关键问题没有解决：要怎么按顺序执行多个<code>IO ()</code>？这个问题直指Monad的核心，我们会从第6节开始回答这个问题。</p>
-<h2 id="不变性和同一律"><a class="markdownIt-Anchor" href="#不变性和同一律"></a> 不变性和同一律</h2>
-<p>逻辑学中的同一律指的是：<strong>人们在同一思维过程中，必须在同一意义上使用概念和判断，不能在不同的意义上使用概念和判断</strong>。<br />
-具体到编程中则是：对于一个确定的<s>完全限定</s>的名称，无论在何时何处以何种方式提及，它都不变地指称同一事物。这个性质也称为不变性，绝大部分非FP语言都不满足这个性质。</p>
+<h2 id="引用透明性"><a class="markdownIt-Anchor" href="#引用透明性"></a> 引用透明性</h2>
 <p><em>施工中</em></p>
 
     </div>
