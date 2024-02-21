@@ -182,7 +182,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-02-22 01:42:56" itemprop="dateModified" datetime="2024-02-22T01:42:56+08:00">2024-02-22</time>
+      <time title="修改时间：2024-02-22 01:47:48" itemprop="dateModified" datetime="2024-02-22T01:47:48+08:00">2024-02-22</time>
     </span>
 
   
@@ -237,6 +237,7 @@
 <li>Closed Type: 非Open Type的所有类型，例如所有非泛型。</li>
 </ul>
 <p>可以看出来偏好泛型的语言总是倾向于把<code>Foo&lt;T,V&gt;</code>整体当成一个类型，而把其中缺少的类型参数当成需要填充的洞，不会把<code>Foo</code>独立出来讨论，也不会有<code>Foo&lt;T,&gt;</code>这样&quot;填充了一半&quot;的类型。</p>
+<p><em>note: 实际上Haskell也有泛型，以上的泛型指的是C#、Rust等类型系统较弱的泛型。</em></p>
 
       
     </div>
@@ -543,9 +544,15 @@ Expr可以粗略地认为是一个值，但Expr通常不是完整的语句。<em
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2024-02-17 01:47:43 / 修改时间：15:25:13" itemprop="dateCreated datePublished" datetime="2024-02-17T01:47:43+08:00">2024-02-17</time>
+      <time title="创建时间：2024-02-17 01:47:43" itemprop="dateCreated datePublished" datetime="2024-02-17T01:47:43+08:00">2024-02-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-02-22 06:49:21" itemprop="dateModified" datetime="2024-02-22T06:49:21+08:00">2024-02-22</time>
     </span>
 
   
@@ -567,11 +574,11 @@ Expr可以粗略地认为是一个值，但Expr通常不是完整的语句。<em
 <li><code>Prop : Type</code>意味着Prop和Nat等&quot;普通&quot;类型一样可以在同一个universe中讨论</li>
 <li>相比于&quot;普通&quot;类型，Prop仍然是一个Sort，意味着在其universe下可以构造新类型，例如下面的代码</li>
 </ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">inductive Or (a b : Prop) : Prop where</span><br><span class="line">| inl (h : a) : Or a b</span><br><span class="line">| inr (h : b) : Or a b</span><br></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">inductive</span> <span class="type">Or</span> (a b : <span class="type">Prop</span>) : <span class="type">Prop</span> <span class="keyword">where</span></span><br><span class="line">| inl (h : a) : <span class="type">Or</span> a b</span><br><span class="line">| inr (h : b) : <span class="type">Or</span> a b</span><br></pre></td></tr></table></figure>
 <p>是lean4标准库中对析取连词的定义。<strong>注意这里是Or : Prop : Type，Or并不是一个Type，千万不要混淆！</strong></p>
 <h1 id="自然推演系统"><a class="markdownIt-Anchor" href="#自然推演系统"></a> 自然推演系统</h1>
 <p>自然推演系统(Natural Deduction)是一个证明演算(proof calculus)系统，是lean4的基础，同样采用自然推演系统的还有Coq。简单来说有三种形式化的推理规则：</p>
-<h2 id="1formation-rules"><a class="markdownIt-Anchor" href="#1formation-rules"></a> 1.Formation Rules</h2>
+<h2 id="formation-rules"><a class="markdownIt-Anchor" href="#formation-rules"></a> Formation Rules</h2>
 <p>Formation Rules用于构造有效的term，在proof assistant中复杂一些，由语法结构和类型、运算等定义直接规定。</p>
 <p>以<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">¬</mi></mrow><annotation encoding="application/x-tex">\neg</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord">¬</span></span></span></span>为例，在lean4中由两部分组成：</p>
 <ol>
@@ -579,18 +586,34 @@ Expr可以粗略地认为是一个值，但Expr通常不是完整的语句。<em
 <li>实际类型定义，此处是Not，代码如下<code>def Not (a : Prop) : Prop := a → False</code></li>
 </ol>
 <p>再以加法运算为例，符号定义是<code>macro_rules | `($x + $y)   =&gt; `(binop% HAdd.hAdd $x $y)</code>，hAdd的定义则是</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">class HAdd (α : Type u) (β : Type v) (γ : outParam (Type w)) where</span><br><span class="line">  hAdd : α → β → γ</span><br></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">HAdd</span> (α : <span class="type">Type</span> <span class="title">u</span>) (β : <span class="type">Type</span> <span class="title">v</span>) (γ : <span class="title">outParam</span> (<span class="type">Type</span> <span class="title">w</span>)) <span class="keyword">where</span></span></span><br><span class="line">  hAdd : α → β → γ</span><br></pre></td></tr></table></figure>
 <p><em>lean4对于一般的term的formation rules没有统一的语法来描述。</em></p>
-<h2 id="2introduction-rules"><a class="markdownIt-Anchor" href="#2introduction-rules"></a> 2.Introduction Rules</h2>
-<p>Introduction Rules用于构造类型，除了∀类型的之外全都可认为是constructor，例如∃类型的定义如下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">inductive Exists &#123;α : Sort u&#125; (p : α → Prop) : Prop where</span><br><span class="line">| intro (w : α) (h : p w) : Exists p</span><br></pre></td></tr></table></figure>
-<h2 id="3elimination-rules"><a class="markdownIt-Anchor" href="#3elimination-rules"></a> 3.Elimination Rules</h2>
-<p>与Introduction Rules刚好相反，Elimination Rules用于&quot;拆解&quot;类型，或者说指出了类型要如何被&quot;使用&quot;，在lean4中通常是定理的形式，还是以∃类型为例</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">theorem Exists.elim &#123;α : Sort u&#125; &#123;p : α → Prop&#125; &#123;b : Prop&#125;</span><br><span class="line">   (h₁ : Exists (fun x =&gt; p x)) (h₂ : ∀ (a : α), p a → b) : b :=</span><br><span class="line">  match h₁ with</span><br><span class="line">  | intro a h =&gt; h₂ a h</span><br></pre></td></tr></table></figure>
-<h2 id="类型和函数类型"><a class="markdownIt-Anchor" href="#类型和函数类型"></a> ∀类型和函数类型</h2>
-<p>∀类型和函数类型在某种程度上是等价的</p>
-<h1 id="propositions-as-types"><a class="markdownIt-Anchor" href="#propositions-as-types"></a> Propositions as Types</h1>
-<p>待补充</p>
+<h2 id="introduction-rules"><a class="markdownIt-Anchor" href="#introduction-rules"></a> Introduction Rules</h2>
+<p>Introduction Rules用于构造类型，除了∀类型(Π type)的之外全都可认为是constructor，例如∃类型的定义如下</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">inductive</span> <span class="type">Exists</span> &#123;α : <span class="type">Sort</span> u&#125; (p : α → <span class="type">Prop</span>) : <span class="type">Prop</span> <span class="keyword">where</span></span><br><span class="line">| intro (w : α) (h : p w) : <span class="type">Exists</span> p</span><br></pre></td></tr></table></figure>
+<h2 id="elimination-rules"><a class="markdownIt-Anchor" href="#elimination-rules"></a> Elimination Rules</h2>
+<p>与Introduction Rules刚好相反，Elimination Rules用于&quot;拆解&quot;类型，或者说指出了类型要如何被&quot;消费&quot;，在lean4中通常是定理的形式，还是以∃类型为例</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">theorem</span> <span class="type">Exists</span>.elim &#123;α : <span class="type">Sort</span> u&#125; &#123;p : α → <span class="type">Prop</span>&#125; &#123;b : <span class="type">Prop</span>&#125;</span><br><span class="line">   (h₁ : <span class="type">Exists</span> (fun x =&gt; p x)) (h₂ : ∀ (a : α), p a → b) : b :=</span><br><span class="line">  match h₁ with</span><br><span class="line">  | intro a h =&gt; h₂ a h</span><br></pre></td></tr></table></figure>
+<h2 id="propositions-as-types"><a class="markdownIt-Anchor" href="#propositions-as-types"></a> Propositions as Types</h2>
+<p>Curry–Howard correspondence是机器证明领域最重要的内容之一，具体到lean4则是其中的直觉主义自然推演系统(Intuitionistic Natural deduction)和类型化λ演算(typed lambda calculus)之间的对应关系。</p>
+<p>总结起来就是一句话：<strong>每一个逻辑命题都对应到程序中的一个类型</strong>。基于此，请务必理解下面几个点：</p>
+<ul>
+<li>对命题的证明=对应类型的值的构造。构造完成即证明结束。</li>
+<li>命题的可证明与否=对应类型是否有值。</li>
+<li>引入公理=假设对应类型的值存在。公理用于证明=假设存在的值参与构造目标值。</li>
+<li>前文所述的Introduction Rules和Elimination Rules也是从逻辑规则到程序的对应关系。</li>
+</ul>
+<h2 id="函数类型-蕴含连词和π-type"><a class="markdownIt-Anchor" href="#函数类型-蕴含连词和π-type"></a> 函数类型、蕴含连词和Π Type</h2>
+<p>lean4中箭头符号<code>→</code>有三种内涵一致的解释：</p>
+<ol>
+<li>从程序的角度来说，形如<code>X → Y</code>表示从类型<code>X</code>映射到类型<code>Y</code>的函数类型。</li>
+<li>从逻辑的角度来说，假如<code>X</code>和<code>Y</code>是<code>Prop</code>，<code>X → Y</code>中的符号<code>→</code>可以解释为蕴含连词。</li>
+<li>从类型的角度来说，假设<code>P</code>是一个<code>X → Prop</code>，那么类型<code>∀ x : X, P x</code>是函数类型<code>(x : X) → P x</code>的别名。<em>这里出现的类型在dependent type理论中叫做Π type或者pi-type。</em></li>
+</ol>
+<p>实际上3就是∀量词的本质——即Π类型，这也是∀类型没有语言中定义的Introduction/Elimination Rules的原因——符号<code>→</code>的语义是语言内置的。<br />
+既已清楚3可以归结到1，重要的是1和2要如何统一起来。答案十分简单，根据上一节的内容，若<code>X</code>和<code>Y</code>都是<code>Prop</code>：<br />
+假设类型为<code>f : (X → Y)</code>的函数存在；假设命题<code>X</code>可证，即值<code>x : X</code>存在，那么<code>f x : Y</code>即是命题<code>Y</code>的证明，因此命题<code>X → Y</code>得证。也就是说在1的基础上2的解释成立。</p>
+<p><em>施工中</em></p>
 
       
     </div>
