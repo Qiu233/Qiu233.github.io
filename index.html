@@ -115,12 +115,12 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-count">5</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -146,7 +146,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://qiu233.github.io/2024/02/21/Typeclass%E6%98%AF%E4%BB%80%E4%B9%88/">
+    <link itemprop="mainEntityOfPage" href="https://qiu233.github.io/2024/02/21/Haskell/%E6%B3%9B%E5%9E%8B%E5%92%8C%E9%AB%98%E9%98%B6%E7%B1%BB%E5%9E%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -164,7 +164,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/02/21/Typeclass%E6%98%AF%E4%BB%80%E4%B9%88/" class="post-title-link" itemprop="url">Typeclass是什么</a>
+          <a href="/2024/02/21/Haskell/%E6%B3%9B%E5%9E%8B%E5%92%8C%E9%AB%98%E9%98%B6%E7%B1%BB%E5%9E%8B/" class="post-title-link" itemprop="url">泛型和高阶类型</a>
         </h2>
 
         <div class="post-meta-container">
@@ -174,8 +174,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2024-02-21 21:23:57" itemprop="dateCreated datePublished" datetime="2024-02-21T21:23:57+08:00">2024-02-21</time>
+      <time title="创建时间：2024-02-21 21:36:51 / 修改时间：23:24:38" itemprop="dateCreated datePublished" datetime="2024-02-21T21:36:51+08:00">2024-02-21</time>
     </span>
 
   
@@ -188,7 +189,8 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          
+          <p><em>施工中</em></p>
+
       
     </div>
 
@@ -214,7 +216,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://qiu233.github.io/2024/02/18/Monad%E6%98%AF%E4%BB%80%E4%B9%88/">
+    <link itemprop="mainEntityOfPage" href="https://qiu233.github.io/2024/02/21/Haskell/Typeclasses%E6%98%AF%E4%BB%80%E4%B9%88/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -232,7 +234,97 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/02/18/Monad%E6%98%AF%E4%BB%80%E4%B9%88/" class="post-title-link" itemprop="url">Monad是什么</a>
+          <a href="/2024/02/21/Haskell/Typeclasses%E6%98%AF%E4%BB%80%E4%B9%88/" class="post-title-link" itemprop="url">Typeclasses本质上是什么</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-02-21 21:23:57 / 修改时间：23:22:10" itemprop="dateCreated datePublished" datetime="2024-02-21T21:23:57+08:00">2024-02-21</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="typeclass"><a class="markdownIt-Anchor" href="#typeclass"></a> Typeclass</h1>
+<p>如果读者熟悉Coq或Lean4，就应该非常清楚所谓typeclass本质上就是一个普通的高阶类型，除了语言内置了一套规则来简化class的使用以外没有什么特别的。<br />
+关于什么是高阶类型，请自行查阅资料或者翻一下我的其他文档(<s>如果有记得写的话</s>)。</p>
+<p>下面以Functor为例来说明：</p>
+<p>例1.</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">FunctorClass</span> (<span class="title">f</span> :: * -&gt; *) <span class="keyword">where</span></span></span><br><span class="line">    fmapC :: (a -&gt; b) -&gt; f a -&gt; f b</span><br><span class="line"><span class="class"><span class="keyword">instance</span> <span class="type">FunctorClass</span> <span class="type">Maybe</span> <span class="keyword">where</span></span></span><br><span class="line">  fmapC = \m fa -&gt; <span class="keyword">case</span> fa <span class="keyword">of</span> <span class="type">Nothing</span> -&gt; <span class="type">Nothing</span></span><br><span class="line">                              <span class="type">Just</span> a -&gt; <span class="type">Just</span> (m a)</span><br></pre></td></tr></table></figure>
+<p>实际上和下面的代码是几乎等价的：</p>
+<p>例2.</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">data</span> <span class="type">FunctorData</span> (<span class="title">f</span> :: * -&gt; *) = <span class="type">FunctorData</span></span></span><br><span class="line">  &#123; fmapD :: <span class="keyword">forall</span> a b. (a -&gt; b) -&gt; f a -&gt; f b</span><br><span class="line">  &#125;</span><br><span class="line"><span class="title">instFunctorMaybe</span> :: <span class="type">FunctorData</span> <span class="type">Maybe</span></span><br><span class="line"><span class="title">instFunctorMaybe</span> = <span class="type">FunctorData</span> &#123;</span><br><span class="line">    fmapD = \m fa -&gt; <span class="keyword">case</span> fa <span class="keyword">of</span> <span class="type">Nothing</span> -&gt; <span class="type">Nothing</span></span><br><span class="line">                                <span class="type">Just</span> a -&gt; <span class="type">Just</span> (m a)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>例2中<code>fmapD</code>是一个field selector，类型签名是：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">fmapD</span> :: <span class="keyword">forall</span> a b f. <span class="type">FunctorData</span> f -&gt; (a -&gt; b) -&gt; f a -&gt; f b</span><br></pre></td></tr></table></figure>
+<p>而例1的<code>fmapC</code>类型签名是</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">fmapC</span> :: <span class="keyword">forall</span> a b f. <span class="type">FunctorClass</span> f =&gt; (a -&gt; b) -&gt; f a -&gt; f b</span><br></pre></td></tr></table></figure>
+<p>看到区别了吗？两者区别的区别仅仅是<code>-&gt;</code>和<code>=&gt;</code>，例1的<code>FunctorClass f =&gt;</code>实际上叫做类型约束(type constraint)，在使用fmapC时我们不用自己传入FunctorClass的实例，因为这是编译器自动完成的。</p>
+<h1 id="继承"><a class="markdownIt-Anchor" href="#继承"></a> 继承</h1>
+<p>Haskell的class存在继承关系，例如说Monad就是Applicative的子类型，你可能很自然想到class的继承可以直接由data的继承关系得到，但很遗憾，Haskell的data并不支持继承。与此相比，Lean4的structure是可以继承的。</p>
+<p>另外，C#和Java中也有class和继承的概念，你可能会想把它们和Haskell统一到一个框架内。我这里明确给出回答：两者完全不是一回事：</p>
+<ul>
+<li>Java的class是OOP的概念，含义接近于&quot;表示一类具体事物或概念&quot;，可以实例化并且在代码中直接操作，继承是对这一&quot;事物&quot;或&quot;概念&quot;的进一步具体化。</li>
+<li>而Haskell的class描述的是性质，顾名思义是对类型的分类(type class)，它的实例化不是由可执行代码完成的，程序员也不能直接操作class的实例(Lean4中可以)。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://qiu233.github.io/2024/02/18/Haskell/Monad%E6%98%AF%E4%BB%80%E4%B9%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Qiu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Qiu的博客">
+      <meta itemprop="description" content="数学和编程">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Qiu的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/02/18/Haskell/Monad%E6%98%AF%E4%BB%80%E4%B9%88/" class="post-title-link" itemprop="url">Monad是什么</a>
         </h2>
 
         <div class="post-meta-container">
@@ -250,7 +342,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-02-21 21:28:11" itemprop="dateModified" datetime="2024-02-21T21:28:11+08:00">2024-02-21</time>
+      <time title="修改时间：2024-02-21 21:36:15" itemprop="dateModified" datetime="2024-02-21T21:36:15+08:00">2024-02-21</time>
     </span>
 
   
