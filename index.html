@@ -186,9 +186,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2024-04-11 03:48:00 / 修改时间：22:19:48" itemprop="dateCreated datePublished" datetime="2024-04-11T03:48:00+08:00">2024-04-11</time>
+      <time title="创建时间：2024-04-11 03:48:00" itemprop="dateCreated datePublished" datetime="2024-04-11T03:48:00+08:00">2024-04-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-04-12 18:07:05" itemprop="dateModified" datetime="2024-04-12T18:07:05+08:00">2024-04-12</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -358,8 +364,31 @@
 <li>假如pc正好在第一条指令前，或在最后一条addi指令后，那么当前<code>sp</code>即是calling function的栈顶部。</li>
 </ul>
 <p>如果能确保所有函数都有如上形式，那么调试器能从第一条指令的操作数中读出栈帧的总长度。但如果不能确保这一点，那么编译器必须提供每个函数的栈帧总长度，调试器仍然可以根据pc确认函数执行的位置来计算栈帧。</p>
-<p>还有一种特殊情况，例如C语言的variable-length array可以在栈上分配运行时确定长度的数组，我在x86下反编译确认过：即便编译时带参数<code>-fomit-frame-pointer</code>，生成的汇编代码也会使用<code>rbp</code>保存frame pointer。所以这种情况下调试器无法用上述的方法(否则等于解决了停机问题)，只能通过保存fp的寄存器找到上一个栈帧。</p>
-<p><em>未完</em></p>
+<p>还有一种特殊情况，例如C语言的variable-length array可以在栈上分配运行时确定长度的数组，我通过反编译发现即便编译时带参数<code>-fomit-frame-pointer</code>，x86下生成的汇编代码也会使用<code>rbp</code>保存frame pointer。而网站<a target="_blank" rel="noopener" href="https://godbolt.org/">https://godbolt.org/</a>反汇编得到的RISC-V结果似乎把fp(即s0)当成通用寄存器使用，所以这个特殊情况似乎在不同平台上表现不同，我暂时得不出确定性的结论。</p>
+<h1 id="实验练习"><a class="markdownIt-Anchor" href="#实验练习"></a> 实验练习</h1>
+<p>题目太长就不在此转述了，请见原文。</p>
+<p>因为课程的语言是Rust，log crate已经解决了彩色输出问题，所以这道题我只关注这个要求，同时这也是我觉得第一章最有趣的部分：</p>
+<blockquote>
+<p>challenge: 支持多核，实现多个核的 boot。</p>
+</blockquote>
+<p>思路如下：</p>
+<ul>
+<li>QEMU的<code>-SMP</code>参数指定核心总数，默认为一，所以要在Makefile里面把-SMP设置为2或者更大的数。</li>
+<li>机器(QEMU)启动时只有一个hart，称为booting hart，我们要在代码里自己启动其他hart，另外注意booting hart的hartid不一定为0，我被这个问题折磨了好久才发现。</li>
+<li>在<code>rust_main</code>函数入口处保存hartid(在a0中)到局部变量，然后在<code>clearbss();</code>之后保存到全局变量，我用的是<code>BOOT_HART</code>。要注意顺序很重要，因为<code>clearbss();</code>会把初值为0和未初始化的全局变量全部清除。</li>
+<li>然后从0开始遍历一小段hartid，跳过和<code>BOOT_HART</code>相等的值，分别调用<code>sbi_rt::hart_start(hartid, thread_entry, opaque)</code>并检查返回值，在第一次成功时跳出循环。我的实验只额外创建了一个hart，如果你需要更多hart的话可以写自己的逻辑。</li>
+</ul>
+<h2 id="实现"><a class="markdownIt-Anchor" href="#实现"></a> 实现</h2>
+<p>首先要找到一个可用的hartid，我找了很多资料也没有找到能在运行时探测可用hartid的方法，或者应该说是implementation-specific的，所以目前我是直接遍历一小段hartid，在QEMU下没有遇到问题。其中用到的全局变量<code>BOOT_HART</code>在前文描述思路时已经说过了，比较trivial所以代码就不放了。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">start_one_hart</span>() &#123;</span><br><span class="line">    <span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> &#123;</span><br><span class="line">        <span class="keyword">fn</span> <span class="title function_">thread_1_entry</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">unsafe</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">10</span> &#123; <span class="comment">// find the first available hartid</span></span><br><span class="line">            <span class="keyword">if</span> i == BOOT_HART &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">result</span>: sbi_rt::SbiRet = sbi_rt::<span class="title function_ invoke__">hart_start</span>(i <span class="keyword">as</span> <span class="type">usize</span>, thread_1_entry <span class="keyword">as</span> <span class="type">usize</span>, <span class="number">0</span>);</span><br><span class="line">            <span class="keyword">if</span> result.<span class="title function_ invoke__">is_ok</span>() &#123;</span><br><span class="line">                info!(<span class="string">&quot;[kernel] Successfully started hart #&#123;:x&#125;H.&quot;</span>, i);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                error!(<span class="string">&quot;[kernel] Failed to started hart #&#123;:x&#125;H: err= &#123;&#125;&quot;</span>, i, result.error <span class="keyword">as</span> <span class="type">isize</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其他hart和booting hart一样，都需要栈空间，而且每个hart的栈空间相互独立。栈的初始化和kernel的入口点一样<code>la sp, thread_stack_top</code>即可，栈空间可以分配在<code>entry.asm</code>的<code>boot_stack_top</code>附近，即在原来的boot_stack前或后加入这段代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">    .globl thread_1_stack_lower_bound</span><br><span class="line">thread_1_stack_lower_bound:</span><br><span class="line">    .space 4096 * 16</span><br><span class="line">    .globl thread_1_stack_top</span><br><span class="line">thread_1_stack_top:</span><br></pre></td></tr></table></figure>
+<p><code>hart_start</code>函数的第二个参数指定启动的hart跳转到的地址，<strong>不要跳转到Rust的函数</strong>，因为<code>#[naked]</code>特性目前还是用不了。我建议跳转到<code>entry.asm</code>的新加入的.text段中的函数，设置好<code>sp</code>，然后立即用<code>call</code>跳转到Rust函数：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">    .text</span><br><span class="line">    ...</span><br><span class="line">    # thread 1 entry point</span><br><span class="line">    .global thread_1_entry</span><br><span class="line">thread_1_entry:</span><br><span class="line">    la sp, thread_1_stack_top</span><br><span class="line">    call thread_1_main</span><br></pre></td></tr></table></figure>
+<p>如果按照这个步骤来做，那么跳回的Rust函数的第一、二个参数分别就是hartid和前面传入的opaque参数，不过这里因为没有用到所以注释掉了：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// jump from function `thread_1_entry` in entry.asm</span></span><br><span class="line"><span class="meta">#[no_mangle]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">thread_1_main</span>(hartid: <span class="type">usize</span><span class="comment">/*, opaque: usize*/</span>) <span class="punctuation">-&gt;</span> ! &#123;</span><br><span class="line">    info!(<span class="string">&quot;[kernel] Running from another thread, hartid = &#123;&#125;&quot;</span>, hartid);</span><br><span class="line">    <span class="keyword">loop</span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到用<code>info!</code>输出了被启动的hart的hartid，但如果不加锁的话输出会乱序，所以将<code>console.rs</code>文件的<code>print</code>函数改为：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// src/console.rs</span></span><br><span class="line"><span class="keyword">use</span> core::sync::atomic::&#123;AtomicU32, Ordering&#125;;</span><br><span class="line">...</span><br><span class="line"><span class="keyword">static</span> STDOUT_LOCK: AtomicU32 = AtomicU32::<span class="title function_ invoke__">new</span>(<span class="number">0</span>);</span><br><span class="line">...</span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">print</span>(args: fmt::Arguments) &#123;</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">let</span> <span class="variable">Err</span>(_) = STDOUT_LOCK.<span class="title function_ invoke__">compare_exchange</span>(<span class="number">0</span>, <span class="number">1</span>, Ordering::AcqRel, Ordering::Acquire) &#123;&#125;</span><br><span class="line">    Stdout.<span class="title function_ invoke__">write_fmt</span>(args).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    STDOUT_LOCK.<span class="title function_ invoke__">store</span>(<span class="number">0</span>, Ordering::Release);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
