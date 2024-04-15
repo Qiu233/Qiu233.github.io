@@ -188,7 +188,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2024-04-15 14:23:31 / 修改时间：17:19:05" itemprop="dateCreated datePublished" datetime="2024-04-15T14:23:31+08:00">2024-04-15</time>
+      <time title="创建时间：2024-04-15 14:23:31 / 修改时间：21:13:58" itemprop="dateCreated datePublished" datetime="2024-04-15T14:23:31+08:00">2024-04-15</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -210,7 +210,8 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>今天花了一天读spec有关地址转换的部分，总结出下面这张图(Sv39)，去掉了权限等等细节，只保留了地址转换的大框架。接下来所有的内容皆围绕这张图展开。</p>
+          <h1 id="地址转换"><a class="markdownIt-Anchor" href="#地址转换"></a> 地址转换</h1>
+<p>下面这张图(Sv39)去掉了权限等等细节，只保留了地址转换的大框架。本节内容围绕这张图展开。</p>
 <img src="/2024/04/15/OSCamp-D8-rCore-Chapter-4-Address-Translation/sv39.png" class="" title="Sv39">
 <h2 id="物理地址-虚拟地址"><a class="markdownIt-Anchor" href="#物理地址-虚拟地址"></a> 物理地址、虚拟地址</h2>
 <ul>
@@ -237,7 +238,7 @@
 <li>叶子节点：图中所有PPN带有涂色的PTE。包括一块到三块涂色，都是叶子节点。</li>
 <li>内部节点：PPN三个块均无涂色的PTE。</li>
 </ul>
-<h2 id="地址转换"><a class="markdownIt-Anchor" href="#地址转换"></a> 地址转换</h2>
+<h2 id="转换算法"><a class="markdownIt-Anchor" href="#转换算法"></a> 转换算法</h2>
 <ul>
 <li>0层的叶子节点的2、1、0块PPN(共44位)都被涂成绿色，表示转换后的PA的，<strong>高44位</strong>被这44位填充，低12位直接从输入的VA的page offset复制。</li>
 <li>1层的叶子节点只有2、1块PPN(共35位)被涂成蓝色，0块为0，表示转换后PA只有，<strong>高35位</strong>被涂色的部分填充，低12+9=21位直接从VA复制。</li>
@@ -268,10 +269,15 @@
 <p>此外，公式没有覆盖出错的情况，例如如果在<code>i=0</code>时仍然不是叶子节点，依spec所述会发生page fault。如果需要完整的细节，请参考spec原文。</p>
 <p>该算法可以直接迁移到其他分页机制上，其中有几个常量可能需要改变：</p>
 <ul>
-<li>4096(bytes)，即4K，Rv32和Rv64的页大小都是4K，无需更改。</li>
-<li>8(bytes)，即PTE的长度，Sv32是4，本文的Sv39及其他Rv64的分页机制都是8。</li>
+<li>4096(bytes)，即4K，RV32和RV64的页大小都是4K，无需更改。</li>
+<li>8(bytes)，即PTE的长度，Sv32是4，本文的Sv39及其他RV64的分页机制都是8。</li>
 <li>2，即层数减去1，Sv39的层数是3所以这里是2。如果是Sv32那么就是1。如果是Sv48那么就是3。具体请参见文档。</li>
 </ul>
+<h1 id="asid和tlb"><a class="markdownIt-Anchor" href="#asid和tlb"></a> ASID和TLB</h1>
+<p>ASID是寄存器<code>satp</code>的一个字段，在RV64中长度为16位，全称为Address Space Identifier。</p>
+<p>TLB全称为Translation Lookaside Buffer，作用是缓存最近的地址转换结果来加速后续转换。TLB是<strong>不在RAM上的</strong>一块储存空间，每个hart都有自己独特的TLB。TLB中缓存的记录也包括对应的ASID。</p>
+<p>更新页表之后需要用指令<code>SFENCE.VMA</code>刷新<strong>当前</strong>hart的TLB，该指令也可以通过两个寄存器operand指定某个ASID和某个虚拟地址只让TLB的部分记录无效化，避免刷新整个TLB。</p>
+<p>注意！据spec所述，并不是所有RISC-V实现都支持ASID；即便支持，也不一定16个位都可用。在不支持ASID的实现上只能使用编号为0的ASID。一般一个ASID对应一个进程，但是ASID的总数有限，要运行更多的进程必须复用ASID，这个机制叫做ASID Recycling。在只有0号ASID的实现上每次切换进程都要把整个TLB刷新，相当于不断复用这一个ASID。</p>
 
       
     </div>
