@@ -20,19 +20,18 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"qiu233.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.19.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="地址转换 下面这张图(Sv39)去掉了权限等等细节，只保留了地址转换的大框架。本节内容围绕这张图展开。   物理地址、虚拟地址  物理地址简称PA，虚拟地址简称VA。 PPN是Physical Page Number的缩写，Sv39中所有PPN的长度都为44位。 VPN是Virtual Page Number的缩写，Sv39中所有VPN的长度都为27位。 PAGESIZE是一个Page的大小，R">
+    <meta name="description" content="地址转换 今天花了不少时间读spec，然后做了下面这张图(Sv39)。其中去掉了权限等等细节，只保留了地址转换的大框架。本节内容围绕这张图展开。   物理地址、虚拟地址  物理地址简称PA，虚拟地址简称VA。 PPN是Physical Page Number的缩写，Sv39中所有PPN的长度都为44位。 VPN是Virtual Page Number的缩写，Sv39中所有VPN的长度都为27位。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="OSCamp D8-rCore-Chapter-4-Address Translation">
 <meta property="og:url" content="https://qiu233.github.io/2024/04/15/OSCamp-D8-rCore-Chapter-4-Address-Translation/index.html">
 <meta property="og:site_name" content="Qiu的博客">
-<meta property="og:description" content="地址转换 下面这张图(Sv39)去掉了权限等等细节，只保留了地址转换的大框架。本节内容围绕这张图展开。   物理地址、虚拟地址  物理地址简称PA，虚拟地址简称VA。 PPN是Physical Page Number的缩写，Sv39中所有PPN的长度都为44位。 VPN是Virtual Page Number的缩写，Sv39中所有VPN的长度都为27位。 PAGESIZE是一个Page的大小，R">
+<meta property="og:description" content="地址转换 今天花了不少时间读spec，然后做了下面这张图(Sv39)。其中去掉了权限等等细节，只保留了地址转换的大框架。本节内容围绕这张图展开。   物理地址、虚拟地址  物理地址简称PA，虚拟地址简称VA。 PPN是Physical Page Number的缩写，Sv39中所有PPN的长度都为44位。 VPN是Virtual Page Number的缩写，Sv39中所有VPN的长度都为27位。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://qiu233.github.io/2024/04/15/OSCamp-D8-rCore-Chapter-4-Address-Translation/sv39.png">
 <meta property="article:published_time" content="2024-04-15T06:23:31.000Z">
-<meta property="article:modified_time" content="2024-04-15T13:13:58.166Z">
+<meta property="article:modified_time" content="2024-04-16T04:14:36.203Z">
 <meta property="article:author" content="Qiu">
 <meta property="article:tag" content="Rust">
-<meta property="article:tag" content="OSCamp">
 <meta property="article:tag" content="RISC-V">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://qiu233.github.io/2024/04/15/OSCamp-D8-rCore-Chapter-4-Address-Translation/sv39.png">
@@ -140,7 +139,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -195,9 +194,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2024-04-15 14:23:31 / 修改时间：21:13:58" itemprop="dateCreated datePublished" datetime="2024-04-15T14:23:31+08:00">2024-04-15</time>
+      <time title="创建时间：2024-04-15 14:23:31" itemprop="dateCreated datePublished" datetime="2024-04-15T14:23:31+08:00">2024-04-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-04-16 12:14:36" itemprop="dateModified" datetime="2024-04-16T12:14:36+08:00">2024-04-16</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -205,7 +210,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/trace/" itemprop="url" rel="index"><span itemprop="name">trace</span></a>
+          <a href="/categories/OSCamp/" itemprop="url" rel="index"><span itemprop="name">OSCamp</span></a>
         </span>
     </span>
 
@@ -219,7 +224,7 @@
     
     
     <div class="post-body" itemprop="articleBody"><h1 id="地址转换"><a class="markdownIt-Anchor" href="#地址转换"></a> 地址转换</h1>
-<p>下面这张图(Sv39)去掉了权限等等细节，只保留了地址转换的大框架。本节内容围绕这张图展开。</p>
+<p>今天花了不少时间读spec，然后做了下面这张图(Sv39)。其中去掉了权限等等细节，只保留了地址转换的大框架。本节内容围绕这张图展开。</p>
 <img src="/2024/04/15/OSCamp-D8-rCore-Chapter-4-Address-Translation/sv39.png" class="" title="Sv39">
 <h2 id="物理地址-虚拟地址"><a class="markdownIt-Anchor" href="#物理地址-虚拟地址"></a> 物理地址、虚拟地址</h2>
 <ul>
@@ -296,7 +301,6 @@
     <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/Rust/" rel="tag"># Rust</a>
-              <a href="/tags/OSCamp/" rel="tag"># OSCamp</a>
               <a href="/tags/RISC-V/" rel="tag"># RISC-V</a>
           </div>
 
@@ -309,6 +313,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2024/04/16/OSCamp-D9-rCore-Chapter-4-Code-Comprehension/" rel="next" title="OSCamp D9-rCore-Chapter-4-Code Comprehension">
+                  OSCamp D9-rCore-Chapter-4-Code Comprehension <i class="fa fa-angle-right"></i>
+                </a>
             </div>
           </div>
     </footer>

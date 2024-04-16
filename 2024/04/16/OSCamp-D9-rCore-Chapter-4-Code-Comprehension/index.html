@@ -20,29 +20,31 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"qiu233.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.19.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="声明  本博客有关清华大学2024年春夏季开源操作系统训练营之系列文章仅供参考及学习用途。 告读者：学术不端是荣誉准则所明令禁止的行为！ 因此我不会在文章中放具体的、能直接照搬的实现代码，仅关注原仓库的代码理解或实验思路。读者可自由引用文章作为参考资料，但我作为作者和参与训练营的学生，除第一阶段(rustlings)内容以外，绝不承认与任何其他参与者存在私下交流或合作。 作为作者，我保证本系列文">
+    <meta name="description" content="今天花了大半天读代码，然后整理出下面这张图，作为rCore第4章地址空间一览。图中包括内核的地址空间和两个进程的地址空间。虚线表示地址相等，没有虚线的部分的宽度比例没有实际意义。 地址转换机制请见上一篇文章。   地址空间切换 虚拟地址空间到物理地址的映射由MemorySet决定，内核只有一个全局的实例KERNEL_SPACE，而每一个进程都有独特的MemorySet。用户程序切换到内核态时，在执">
 <meta property="og:type" content="article">
-<meta property="og:title" content="OSCamp D0-序言">
-<meta property="og:url" content="https://qiu233.github.io/2024/04/08/OSCamp-D0-%E5%BA%8F%E8%A8%80/index.html">
+<meta property="og:title" content="OSCamp D9-rCore-Chapter-4-Code Comprehension">
+<meta property="og:url" content="https://qiu233.github.io/2024/04/16/OSCamp-D9-rCore-Chapter-4-Code-Comprehension/index.html">
 <meta property="og:site_name" content="Qiu的博客">
-<meta property="og:description" content="声明  本博客有关清华大学2024年春夏季开源操作系统训练营之系列文章仅供参考及学习用途。 告读者：学术不端是荣誉准则所明令禁止的行为！ 因此我不会在文章中放具体的、能直接照搬的实现代码，仅关注原仓库的代码理解或实验思路。读者可自由引用文章作为参考资料，但我作为作者和参与训练营的学生，除第一阶段(rustlings)内容以外，绝不承认与任何其他参与者存在私下交流或合作。 作为作者，我保证本系列文">
+<meta property="og:description" content="今天花了大半天读代码，然后整理出下面这张图，作为rCore第4章地址空间一览。图中包括内核的地址空间和两个进程的地址空间。虚线表示地址相等，没有虚线的部分的宽度比例没有实际意义。 地址转换机制请见上一篇文章。   地址空间切换 虚拟地址空间到物理地址的映射由MemorySet决定，内核只有一个全局的实例KERNEL_SPACE，而每一个进程都有独特的MemorySet。用户程序切换到内核态时，在执">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-04-07T16:00:00.000Z">
-<meta property="article:modified_time" content="2024-04-16T12:43:49.668Z">
+<meta property="og:image" content="https://qiu233.github.io/2024/04/16/OSCamp-D9-rCore-Chapter-4-Code-Comprehension/rcore-ch4-mm-spaces.png">
+<meta property="article:published_time" content="2024-04-16T04:14:07.000Z">
+<meta property="article:modified_time" content="2024-04-16T12:20:14.981Z">
 <meta property="article:author" content="Qiu">
 <meta property="article:tag" content="Rust">
 <meta property="article:tag" content="RISC-V">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qiu233.github.io/2024/04/16/OSCamp-D9-rCore-Chapter-4-Code-Comprehension/rcore-ch4-mm-spaces.png">
 
 
-<link rel="canonical" href="https://qiu233.github.io/2024/04/08/OSCamp-D0-%E5%BA%8F%E8%A8%80/">
+<link rel="canonical" href="https://qiu233.github.io/2024/04/16/OSCamp-D9-rCore-Chapter-4-Code-Comprehension/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://qiu233.github.io/2024/04/08/OSCamp-D0-%E5%BA%8F%E8%A8%80/","path":"2024/04/08/OSCamp-D0-序言/","title":"OSCamp D0-序言"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://qiu233.github.io/2024/04/16/OSCamp-D9-rCore-Chapter-4-Code-Comprehension/","path":"2024/04/16/OSCamp-D9-rCore-Chapter-4-Code-Comprehension/","title":"OSCamp D9-rCore-Chapter-4-Code Comprehension"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>OSCamp D0-序言 | Qiu的博客</title>
+<title>OSCamp D9-rCore-Chapter-4-Code Comprehension | Qiu的博客</title>
   
 
 
@@ -114,7 +116,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A3%B0%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text"> 声明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BA%8F%E8%A8%80"><span class="nav-number">2.</span> <span class="nav-text"> 序言</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%88%87%E6%8D%A2"><span class="nav-number">1.</span> <span class="nav-text"> 地址空间切换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E7%9A%84identity-mappings"><span class="nav-number">2.</span> <span class="nav-text"> 内核的Identity Mappings</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">3.</span> <span class="nav-text"> 内存分配</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -164,7 +166,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qiu233.github.io/2024/04/08/OSCamp-D0-%E5%BA%8F%E8%A8%80/">
+    <link itemprop="mainEntityOfPage" href="https://qiu233.github.io/2024/04/16/OSCamp-D9-rCore-Chapter-4-Code-Comprehension/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -177,12 +179,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="OSCamp D0-序言 | Qiu的博客">
+      <meta itemprop="name" content="OSCamp D9-rCore-Chapter-4-Code Comprehension | Qiu的博客">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          OSCamp D0-序言
+          OSCamp D9-rCore-Chapter-4-Code Comprehension
         </h1>
 
         <div class="post-meta-container">
@@ -192,15 +194,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2024-04-08 00:00:00" itemprop="dateCreated datePublished" datetime="2024-04-08T00:00:00+08:00">2024-04-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-04-16 20:43:49" itemprop="dateModified" datetime="2024-04-16T20:43:49+08:00">2024-04-16</time>
+      <time title="创建时间：2024-04-16 12:14:07 / 修改时间：20:20:14" itemprop="dateCreated datePublished" datetime="2024-04-16T12:14:07+08:00">2024-04-16</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -221,27 +217,50 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h1 id="声明"><a class="markdownIt-Anchor" href="#声明"></a> 声明</h1>
-<blockquote>
-<p>本博客有关清华大学2024年春夏季开源操作系统训练营之系列文章仅供参考及学习用途。</p>
-<p><strong>告读者：学术不端是<a target="_blank" rel="noopener" href="https://learningos.cn/rCore-Tutorial-Guide-2024S/honorcode.html">荣誉准则</a>所明令禁止的行为！</strong></p>
-<p>因此我不会在文章中放具体的、能直接照搬的实现代码，仅关注原仓库的代码理解或实验思路。读者可自由引用文章作为参考资料，但我作为作者和参与训练营的学生，除第一阶段(rustlings)内容以外，绝不承认与任何其他参与者存在私下交流或合作。</p>
-<p>作为作者，我保证本系列文章：</p>
+    <div class="post-body" itemprop="articleBody"><p>今天花了大半天读代码，然后整理出下面这张图，作为rCore第4章地址空间一览。图中包括内核的地址空间和两个进程的地址空间。<strong>虚线表示地址相等，没有虚线的部分的宽度比例没有实际意义。</strong></p>
+<p>地址转换机制请见上一篇文章。</p>
+<img src="/2024/04/16/OSCamp-D9-rCore-Chapter-4-Code-Comprehension/rcore-ch4-mm-spaces.png" class="">
+<h2 id="地址空间切换"><a class="markdownIt-Anchor" href="#地址空间切换"></a> 地址空间切换</h2>
+<p>虚拟地址空间到物理地址的映射由<code>MemorySet</code>决定，内核只有一个全局的实例<code>KERNEL_SPACE</code>，而每一个进程都有独特的<code>MemorySet</code>。用户程序切换到内核态时，在执行复杂代码前必须先转换地址空间。在回到用户态之前必须把地址空间转换回去。</p>
+<p>如图，包括内核和所有进程的虚拟地址空间的最后一个VP(虚拟页)被映射到<strong>同一个PP(物理页)</strong>：<strong>蹦床(Trampoline)</strong>，即<code>.text.trampoline</code>段中的<code>__alltraps</code>。</p>
+<p>图中内核的最后一个VP涂色和进程的不一样，原因是内核虽然这一段映射与进程相同，但内核态的trap处理程序会被切换成另一个函数。</p>
+<p>下面是第四章引入的新的trap跳转机制：</p>
+<ol>
+<li>用户态<code>stvec</code>保存了<code>TRAMPOLINE</code>，用户态发生trap时会跳转至该处。</li>
+<li>切换<code>sp</code>为<code>TRAP_CONTEXT_BASE</code>，在此处(<strong>右方</strong>)保存当前的上下文，不同进程的<code>TRAP_CONTEXT_BASE</code>映射到的物理页不同，所以上下文保存在各自的进程空间中。</li>
+<li>切换<code>satp</code>，<strong>进入内核空间</strong>。切换<code>sp</code>为内核栈。</li>
+<li>跳转执行处理trap的逻辑代码，该代码开始时会切换<code>stvec</code>为内核空间的trap处理程序。</li>
+<li>trap处理完成，<code>stvec</code>切回<code>TRAMPOLINE</code>，并跳转至<code>__restore</code>。</li>
+<li><code>satp</code>切回进程空间。<code>sp</code>切换为<code>TRAP_CONTEXT_BASE</code>，然后从该处恢复之前保存的信息。</li>
+<li><code>sp</code>切回保存的：trap前的栈顶。</li>
+<li><code>sret</code>返回用户态。</li>
+</ol>
+<h2 id="内核的identity-mappings"><a class="markdownIt-Anchor" href="#内核的identity-mappings"></a> 内核的Identity Mappings</h2>
+<p>Identity Mappings指的是直接把VP映射到相同的PP。注意到图中左上角的<code>Kernel Range</code>和<code>Physical Space Range</code>，它们是第四章唯二的Identity Mappings：</p>
 <ul>
-<li>皆遵守<a target="_blank" rel="noopener" href="https://learningos.cn/rCore-Tutorial-Guide-2024S/honorcode.html">荣誉准则</a>。</li>
-<li>皆由我一人独自完成。</li>
+<li>Kernel Range：包含linker script中的所有段，也就是所有的内核代码、数据，请见<code>MemorySet::new_kernel</code>。</li>
+<li>Physical Space Range：从<code>ekernel</code>开始直到<code>0x88000000</code>的空间，可以被分配和管理的空间。</li>
 </ul>
-<p>若事实与我所说不符，我愿承担其导致的一切责任。</p>
-</blockquote>
-<h1 id="序言"><a class="markdownIt-Anchor" href="#序言"></a> 序言</h1>
-<p>这是我第一次参加校外计算机相关的活动，我的目标是在接下来的考核中取得优胜，<strong>并获得今年七八月的线下实习机会</strong>。</p>
-<p>关于我自己：</p>
+<h2 id="内存分配"><a class="markdownIt-Anchor" href="#内存分配"></a> 内存分配</h2>
+<p>注意图中天蓝色和灰色区域。</p>
 <ul>
-<li>我最喜欢的编程语言是Lean4和Haskell</li>
-<li>我最感兴趣的方向是类型论和逻辑，其次是编程语言及其实现，再次是操作系统</li>
-<li>我最擅长的技能是函数式编程</li>
+<li>灰色区域：没有映射到物理地址的虚拟地址空间，如果被访问将会触发著名的Segmentation Fault。</li>
+<li>标记为guard的灰色page的目的是防止栈越界访问到其他区域。</li>
+<li>天蓝色区域是Identity Mapping，整块由全局的<code>FRAME_ALLOCATOR</code>分配和回收，它分配的PP目前只有两种用途：<strong>内核栈和进程内存</strong>。</li>
 </ul>
-<p><em>待补充</em></p>
+<p><strong>这里没有循环定义，因为Identity Mappings本身不会被<code>FRAME_ALLOCATOR</code>管理——它们的PP是直接由VP确定的。</strong></p>
+<p>进程空间的User Stack左侧有三块特殊的Area，对应ELF文件的类型为PT_LOAD的Program Headers，分别是：</p>
+<ol>
+<li>具有读取、执行权限的代码区域。</li>
+<li>具有读取权限的只读数据区域。</li>
+<li>具有读取、写入权限的数据区域，包括未初始化的bss段。</li>
+</ol>
+<p>这三块区域连同右侧的User Stack、倒数第二页的TRAP_CONTEXT，<strong>总计五块区域</strong>在程序正式执行前由操作系统分配固定大小的空间。</p>
+<p>另外两个则是：</p>
+<ul>
+<li>最后的TRAP_HANDLER：固定映射到同一个PP，前面已经说过，不再赘述。</li>
+<li>Heap：初始时<code>BRK</code>和<code>Heap Bottom</code>重合，因为大小为0。但是程序可以通过系统调用让OS分配更多内存，同时会将<code>BRK</code>右移，Heap扩大。</li>
+</ul>
 
     </div>
 
@@ -259,11 +278,11 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
+                <a href="/2024/04/15/OSCamp-D8-rCore-Chapter-4-Address-Translation/" rel="prev" title="OSCamp D8-rCore-Chapter-4-Address Translation">
+                  <i class="fa fa-angle-left"></i> OSCamp D8-rCore-Chapter-4-Address Translation
+                </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2024/04/09/OSCamp-D1-1-Rustlings/" rel="next" title="OSCamp D1-Rustlings">
-                  OSCamp D1-Rustlings <i class="fa fa-angle-right"></i>
-                </a>
             </div>
           </div>
     </footer>
