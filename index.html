@@ -122,7 +122,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -149,6 +149,163 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://qiu233.github.io/2024/04/20/OSCamp-D14-rCore-Chapter-5-Glance/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Qiu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Qiu的博客">
+      <meta itemprop="description" content="数学和编程">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Qiu的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/04/20/OSCamp-D14-rCore-Chapter-5-Glance/" class="post-title-link" itemprop="url">OSCamp D14-rCore Chapter 5-Glance</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-04-20 21:04:38" itemprop="dateCreated datePublished" datetime="2024-04-20T21:04:38+08:00">2024-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-04-21 01:38:11" itemprop="dateModified" datetime="2024-04-21T01:38:11+08:00">2024-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/OSCamp/" itemprop="url" rel="index"><span itemprop="name">OSCamp</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="进程调度"><a class="markdownIt-Anchor" href="#进程调度"></a> 进程调度</h1>
+<img src="/2024/04/20/OSCamp-D14-rCore-Chapter-5-Glance/rcore-ch5-task-scheduling.png" class="">
+<p>上图展示的是第五章的进程切换方式，和前几章不同的是第五章用一个<code>idle task</code>来切换，它有如下性质：</p>
+<ul>
+<li>没有用户代码，整个idle task只执行内核代码。</li>
+<li>不在进程队列中，不会被&quot;管理&quot;，只有在切换进程时才会被调度。</li>
+</ul>
+<p>idle task的代码只有一个简单的循环(函数<code>run_tasks</code>中)：</p>
+<ol start="0">
+<li>循环头。</li>
+<li>通过函数<code>fetch_task</code>从进程队列取出下一个要执行的进程。</li>
+<li>用<code>__switch</code>切换至该进程，并且把当前状态保存至<code>idle_task_cx</code>。</li>
+<li>当该进程返回，会通过<code>__switch</code>切回到此处，跳转至循环头，开始下一轮调度。</li>
+</ol>
+<p><code>run_tasks</code>函数的唯一一次调用在<code>rust_main</code>中，内核在初始化完毕后直接进入此处开始执行进程，在进程队列为空时变成空耗的循环。</p>
+<p>有一个特殊情况：当进程结束并切换至idle task时，TaskContext不会被保存，因为该进程绝对不会再次被调度，见函数<code>exit_current_and_run_next</code>。</p>
+<h1 id="tcb和taskmanager"><a class="markdownIt-Anchor" href="#tcb和taskmanager"></a> TCB和TaskManager</h1>
+<p>TaskManager的变化：</p>
+<ul>
+<li>不再保存Task数量和当前Task的id。</li>
+<li>原本的<code>Vec&lt;TaskControlBlock&gt;</code>改为一个计数引用(<s>我用计数引用表示引用计数的名词</s>)的双向链表<code>Deque&lt;Arc&lt;TaskControlBlock&gt;&gt;</code>。</li>
+</ul>
+<p>当前执行状态被转写到另一个新类型<code>Processor</code>中：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">Processor</span> &#123;</span><br><span class="line">    <span class="comment">///The task currently executing on the current processor</span></span><br><span class="line">    current: <span class="type">Option</span>&lt;Arc&lt;TaskControlBlock&gt;&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">///The basic control flow of each core, helping to select and switch process</span></span><br><span class="line">    idle_task_cx: TaskContext,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Processor有一个全局唯一的静态对象，因为教程目前完全是单核的，所以这个设计也没什么问题。</p>
+<p>其中<code>idle_task_cx</code>是idle task的TaskContext，它的值初始时全为0，直到<code>run_tasks</code>第一次调度进程才会被填充。</p>
+<p>current是当前进程<code>TCB</code>的引用，至于它为什么被<code>Option</code>包着，请见<code>take_current_task</code>函数的所有调用处，原因是：</p>
+<blockquote>
+<p>current只会在<code>run_tasks</code>的循环里，在切换之前，被设置为非<code>None</code>值。<br />
+当进程被suspend或exit时，<code>current</code>中原值被拿出，<code>None</code>被写入，从此之后直到进入<code>run_tasks</code>的循环之前都为None。<br />
+特殊情况是当前进程队列为空，<code>run_tasks</code>空转，<code>current</code>恒为<code>None</code>，直到有新的进程入队。</p>
+</blockquote>
+<h2 id="tcb"><a class="markdownIt-Anchor" href="#tcb"></a> TCB</h2>
+<p>我看到源码里面有一些注释提到<code>PCB</code>，但是<code>TaskControlBlock</code>还是原来的名字，我暂且还是用TCB称呼它。</p>
+<p><code>TCB</code>相比前几章最重要的区别是以下四个字段：</p>
+<ul>
+<li><code>pid: PidHandle</code>，该类型实现了<code>Drop</code>，会在被销毁时将pid回收以便之后的进程创建使用。</li>
+<li><code>parent: Option&lt;Weak&lt;TaskControlBlock&gt;&gt;</code>：持有父进程的弱引用。</li>
+<li><code>children: Vec&lt;Arc&lt;TaskControlBlock&gt;&gt;</code>：持有一列子进程的计数引用。</li>
+<li><code>exit_code: i32</code>：进程结束时设置的值，说明进程的结果，父进程可用于判断子进程是否按预期结束。</li>
+</ul>
+<p>需要注意parent和children用了不同的智能指针：</p>
+<ul>
+<li>弱引用<code>Weak&lt;TCB&gt;</code>不会阻止值被drop，因此子进程可以在<strong>父进程已结束且被销毁</strong>的情况下继续运行，此时<code>parent.upgrade</code>会返回<code>None</code>，由此判断父进程已被销毁。</li>
+<li>若父进程存活，那么始终持有子进程的<code>Arc&lt;TCB&gt;</code>，这种情况下子进程即便已结束也<strong>不会被销毁</strong>，如此父进程便有机会检查子进程的<code>exit_code</code>。</li>
+</ul>
+<h1 id="进程的销毁"><a class="markdownIt-Anchor" href="#进程的销毁"></a> 进程的销毁</h1>
+<p>进程的创建，除了多了几个syscall，和前几章没有太大变化，defer到最后。这里先关注进程的销毁和相关数据的生命周期。</p>
+<p>下面这个树状图根据类型的嵌套关系绘制：</p>
+<img src="/2024/04/20/OSCamp-D14-rCore-Chapter-5-Glance/rcore-ch5-lifetime.png" class="">
+<p>其中矩形的颜色表示是否实现Copy和Drop：</p>
+<ul>
+<li>绿色表示不实现Copy，但实现Drop。</li>
+<li>蓝色表示实现Copy。</li>
+</ul>
+<p>其中最重要的是以下三个<strong>实现Drop</strong>并且有对应<strong>全局Allocator</strong>的类型：</p>
+<ul>
+<li>PidHandle：进程创建时分配。</li>
+<li>KernelStack：进程创建时分配。</li>
+<li>FrameTracker：进程运行过程中不断分配和回收。</li>
+</ul>
+<p>当进程的<code>Arc&lt;TCB&gt;</code>的最后一个引用被销毁，TCB被drop，树的下层所有结构全部被回收，包括以上三者。</p>
+<h1 id="相关syscall"><a class="markdownIt-Anchor" href="#相关syscall"></a> 相关syscall</h1>
+<h2 id="sys_fork"><a class="markdownIt-Anchor" href="#sys_fork"></a> sys_fork</h2>
+<p>完全复制当前进程包括当前执行状态等，生成一个子进程。唯一区别是<code>sys_fork</code>的返回不同：</p>
+<ul>
+<li>新的子进程的<code>sys_fork</code>返回0。</li>
+<li>父进程的<code>sys_fork</code>返回子进程的PID。</li>
+</ul>
+<p>如果觉得抽象请见user库的<code>ch5b_initproc</code>程序：该程序用子进程执行<code>ch5b_user_shell</code>并用当前进程等待shell结束。</p>
+<h2 id="sys_exec"><a class="markdownIt-Anchor" href="#sys_exec"></a> sys_exec</h2>
+<p>用程序名执行目标程序，注意，该函数只保留PID和内核栈，会<strong>完全替换</strong>当前进程的地址空间，相当于在原进程中腾笼换鸟。</p>
+<p>和<code>sys_fork</code>结合起来就能实现创建一个全新的进程，请见<code>ch5b_initproc</code>。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1181,7 +1338,7 @@ usually an operating system.</p>
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-04-16 20:43:49" itemprop="dateModified" datetime="2024-04-16T20:43:49+08:00">2024-04-16</time>
+      <time title="修改时间：2024-04-20 21:38:28" itemprop="dateModified" datetime="2024-04-20T21:38:28+08:00">2024-04-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1212,6 +1369,7 @@ usually an operating system.</p>
 <ul>
 <li>皆遵守<a target="_blank" rel="noopener" href="https://learningos.cn/rCore-Tutorial-Guide-2024S/honorcode.html">荣誉准则</a>。</li>
 <li>皆由我一人独自完成。</li>
+<li>未使用任何形式的AI生成的代码。</li>
 </ul>
 <p>若事实与我所说不符，我愿承担其导致的一切责任。</p>
 </blockquote>
