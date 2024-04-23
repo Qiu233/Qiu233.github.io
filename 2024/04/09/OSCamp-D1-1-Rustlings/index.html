@@ -28,7 +28,7 @@
 <meta property="og:description" content="今天的课程因为官网炸了导致无法进行，所以我就按照自己的进度来了。  rustlings 仓库地址是：https:&#x2F;&#x2F;github.com&#x2F;LearningOS&#x2F;rust-rustlings-2024-spring-Qiu233 因为以前没怎么写过Rust，而且算法是我的薄弱项，所以多花了点时间。关于题目没什么好说的，下面说说我对Rust的整体理解。  类型系统 Rust的类型系统大致可以分成几个方">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-08T20:57:27.000Z">
-<meta property="article:modified_time" content="2024-04-16T04:14:47.913Z">
+<meta property="article:modified_time" content="2024-04-23T15:25:22.111Z">
 <meta property="article:author" content="Qiu">
 <meta property="article:tag" content="Rust">
 <meta property="article:tag" content="RISC-V">
@@ -114,7 +114,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#rustlings"><span class="nav-number">1.</span> <span class="nav-text"> rustlings</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.1.</span> <span class="nav-text"> 类型系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%80%E6%9C%89%E6%9D%83"><span class="nav-number">1.2.</span> <span class="nav-text"> 所有权</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#rustlings"><span class="nav-number">1.</span> <span class="nav-text"> rustlings</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.1.</span> <span class="nav-text"> 类型系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#adt"><span class="nav-number">1.1.1.</span> <span class="nav-text"> ADT</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%80%E6%9C%89%E6%9D%83"><span class="nav-number">1.2.</span> <span class="nav-text"> 所有权</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E5%92%8Cinterior-mutability"><span class="nav-number">1.3.</span> <span class="nav-text"> 智能指针和Interior Mutability</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -200,7 +200,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-04-16 12:14:47" itemprop="dateModified" datetime="2024-04-16T12:14:47+08:00">2024-04-16</time>
+      <time title="修改时间：2024-04-23 23:25:22" itemprop="dateModified" datetime="2024-04-23T23:25:22+08:00">2024-04-23</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -230,20 +230,31 @@
 <ul>
 <li>System F，也就是parametric polymorphism</li>
 <li>trait，一种ad-hoc polymorphism，另外Rust没有函数重载</li>
-<li>Associated Type</li>
-<li>Const Generics</li>
-<li>Ownership，类似于Linear Types</li>
-<li>Borrow和Lifetime Parameter</li>
+<li>Associated Type，类比Haskell的functional dependecies</li>
+<li>Const Generics，仅限于基础类型的type to kind promotion</li>
+<li>Ownership，类似于Linear Types，但是有很多例外</li>
+<li>Lifetime Parameter和相关的variance，例如<code>'static &lt;: 'a</code>可以让全局的引用被更小的生命周期使用</li>
 </ul>
 <p>Rust的trait可以看作具有强制类型参数<code>Self</code>的typeclass，例如：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">trait</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>本质上和Haskell的写法</p>
+<p>本质上和下面Haskell的写法差不太多。</p>
 <figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">A</span> <span class="type">Self</span> <span class="keyword">where</span></span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
-<p>差不太多，不过Rust的<code>Self</code>应该是用Associated Type实现的，所以从这个角度来说Rust的trait其实更像C#的abstract static interface，并且因为没有高阶类型，所以类型参数更像是泛型系统的一部分。</p>
-<p>Rust的Associated Type和Haskell的Associated Type虽然同名，但Rust的Associated Type并不是Type Family，作用上来说只是一类特殊的类型参数，防止一个trait因为类型参数不同被多次实现。</p>
+<p>Rust的Associated Type和Haskell的Associated Type虽然同名，但Rust的并不是Type Family，作用上来说只是一类特殊的类型参数(见functional dependencies)，防止一个trait因为类型参数不同被多次实现。</p>
 <p>Const Generics允许将编译期常量当作类型参数，不过只有少数几个类型(primitive types)可以，如果非要在类型论中找个解释，大概是把这些类型promote到trait，然后把它们的编译期确定的值promote到type，类似Haskell的DataKinds。</p>
 <p>Rust没有kind，没有高阶类型，因此没有Monad。可预见的未来大概也不会有高阶类型了，因为就算有也很难和现在默认具有Self类型参数的trait兼容。</p>
 <p>但是令人惊讶的是Rust的问号?有专属语法和还有Try和Error的trait支持，还不算太难用。</p>
+<h3 id="adt"><a class="markdownIt-Anchor" href="#adt"></a> ADT</h3>
+<p>Rust的Algebraic Data Types：</p>
+<ul>
+<li>Empty，即感叹号<code>!</code></li>
+<li>Unit，即<code>()</code></li>
+<li>积类型，即tuple和<code>struct</code></li>
+<li>和类型，即discriminated union，也就是Rust的<code>enum</code></li>
+</ul>
+<p>Rust的Emtpy是编译器开的后门，程序员不能自己定义。这样的写法：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Unit</span>;</span><br></pre></td></tr></table></figure>
+<p>居然是Rust的Unit，而大部分函数式编程语言或者proof assistant中这种没有constructor的定义都是Empty，就Rust搞特殊。</p>
+<p>至于GADT，因为Rust完全没有高阶类型和阶(kind)的概念，所以GADT也基本不用想了。</p>
 <h2 id="所有权"><a class="markdownIt-Anchor" href="#所有权"></a> 所有权</h2>
 <p>Rust最有趣的部分莫过于Ownership和Borrow，目前我的实践还不够，只能大概谈一下。</p>
 <p>首先是所有权，即</p>
@@ -272,7 +283,18 @@
 <p>下面这段代码又会报错：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">test2</span>(v: &amp;<span class="keyword">mut</span> <span class="type">i32</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">wrap</span>&lt;<span class="symbol">&#x27;a</span>&gt;(v: &amp;<span class="symbol">&#x27;a</span> <span class="keyword">mut</span> <span class="type">i32</span>) <span class="punctuation">-&gt;</span> &amp;<span class="symbol">&#x27;a</span> <span class="keyword">mut</span> <span class="type">i32</span> &#123;</span><br><span class="line">    v</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">a</span> = <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">b</span> = <span class="title function_ invoke__">wrap</span>(&amp;<span class="keyword">mut</span> a);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">c</span> = <span class="title function_ invoke__">wrap</span>(&amp;<span class="keyword">mut</span> a);</span><br><span class="line">    <span class="title function_ invoke__">test2</span>(b);</span><br><span class="line">    <span class="title function_ invoke__">test2</span>(c);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>因为main第二行b延续了a的可变引用的生命周期，导致第三行无法再借出可变引用。</p>
-<p>之后其他思考在其他文章里补充吧。</p>
+<h2 id="智能指针和interior-mutability"><a class="markdownIt-Anchor" href="#智能指针和interior-mutability"></a> 智能指针和Interior Mutability</h2>
+<p>大部分智能指针，如Box、Arc等不可变，可理解成一个指向Heap上的不可变引用，连元数据也在堆上，所以长度<strong>仅有指针大小</strong>。</p>
+<p>可变性需要内层的容器支持，叫做内部可变性，这种容器的长度等于容器的元数据长度加上内容长度，可以在堆上也可以在栈上。</p>
+<p>包括：</p>
+<ul>
+<li>RefCell：运行时检查引用规则的容器</li>
+<li>UnsafeCell：同RefCell但是无检查</li>
+<li>Cell：非引用访问，只能&quot;整存整取&quot;</li>
+<li>Mutex：纯互斥锁，所有形式的访问都只能存在最多一个</li>
+<li>RwLock：类似Mutex，但是允许一个写<strong>或</strong>多个读</li>
+</ul>
+<p>一般Heap上的<strong>可读可写</strong>数据由智能指针和内层的容器构成，例如<code>Arc&lt;Mutex&lt;Foo&gt;&gt;</code>。</p>
 
     </div>
 
