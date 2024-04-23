@@ -20,17 +20,17 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"qiu233.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.19.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="之前错把22年的资料拿来学了，这里开始回到2024S的主线。 新版资料第二章没有练习，所以第二和第三章就一起记录了。作业内容不会放到文档里。  基础：陷入、异常、中断 这三个词语和概念是必须搞清楚的，否则没办法继续。他们的英文原词对应如下：  陷入(trap) 异常(exception) 中断(interrupt)  三者并不是平行关系，也不是包含关系，但是确实有因果关系。以下内容仅在常见的M-S">
+    <meta name="description" content="之前错把22年的资料拿来学了，这里开始回到2024S的主线。 新版资料第二章没有练习，所以第二和第三章就一起记录了。作业内容不会放到文档里。 下面两张图分别是：  三个任务按顺序切换的示意图 包括任务上下文的切换">
 <meta property="og:type" content="article">
 <meta property="og:title" content="OSCamp D7-rCore Chapter 2&amp;3">
 <meta property="og:url" content="https://qiu233.github.io/2024/04/14/OSCamp-D7-rCore-Chapter-2-3/index.html">
 <meta property="og:site_name" content="Qiu的博客">
-<meta property="og:description" content="之前错把22年的资料拿来学了，这里开始回到2024S的主线。 新版资料第二章没有练习，所以第二和第三章就一起记录了。作业内容不会放到文档里。  基础：陷入、异常、中断 这三个词语和概念是必须搞清楚的，否则没办法继续。他们的英文原词对应如下：  陷入(trap) 异常(exception) 中断(interrupt)  三者并不是平行关系，也不是包含关系，但是确实有因果关系。以下内容仅在常见的M-S">
+<meta property="og:description" content="之前错把22年的资料拿来学了，这里开始回到2024S的主线。 新版资料第二章没有练习，所以第二和第三章就一起记录了。作业内容不会放到文档里。 下面两张图分别是：  三个任务按顺序切换的示意图 包括任务上下文的切换">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://qiu233.github.io/2024/04/14/OSCamp-D7-rCore-Chapter-2-3/task_context_switch.png">
 <meta property="og:image" content="https://qiu233.github.io/2024/04/14/OSCamp-D7-rCore-Chapter-2-3/task_swich_complete.png">
 <meta property="article:published_time" content="2024-04-14T01:43:47.000Z">
-<meta property="article:modified_time" content="2024-04-20T09:49:47.192Z">
+<meta property="article:modified_time" content="2024-04-23T15:50:32.077Z">
 <meta property="article:author" content="Qiu">
 <meta property="article:tag" content="Rust">
 <meta property="article:tag" content="RISC-V">
@@ -203,7 +203,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-04-20 17:49:47" itemprop="dateModified" datetime="2024-04-20T17:49:47+08:00">2024-04-20</time>
+      <time title="修改时间：2024-04-23 23:50:32" itemprop="dateModified" datetime="2024-04-23T23:50:32+08:00">2024-04-23</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -226,6 +226,14 @@
     
     <div class="post-body" itemprop="articleBody"><p>之前错把22年的资料拿来学了，这里开始回到2024S的主线。</p>
 <p>新版资料第二章没有练习，所以第二和第三章就一起记录了。作业内容不会放到文档里。</p>
+<p>下面两张图分别是：</p>
+<ul>
+<li>三个任务按顺序切换的示意图</li>
+<li>包括任务上下文的切换</li>
+</ul>
+<img src="/2024/04/14/OSCamp-D7-rCore-Chapter-2-3/task_context_switch.png" class="" title="任务切换">
+<img src="/2024/04/14/OSCamp-D7-rCore-Chapter-2-3/task_swich_complete.png" class="" title="任务上下文的切换">
+<span id="more"></span>
 <h1 id="基础陷入-异常-中断"><a class="markdownIt-Anchor" href="#基础陷入-异常-中断"></a> 基础：陷入、异常、中断</h1>
 <p>这三个词语和概念是必须搞清楚的，否则没办法继续。他们的英文原词对应如下：</p>
 <ul>
@@ -325,8 +333,7 @@
 </ul>
 <p>和第二章不同的是，因为多个任务&quot;同时&quot;进行，所以每个任务都需要一个用户栈，和对应的内核栈。</p>
 <p>U模式的任务不能直接切换到其他任务，<strong>任务之间的切换必须在内核态完成</strong>，例如教程中的一个syscall函数<code>sys_yield</code>会进入S模式，它的作用是从当前任务主动让出，切换到其他任务上执行，而任务必须从S模式切入。</p>
-<p>用户栈与内核栈之间的切换在第二章已经实现，所以这里只需要实现<strong>任务的内核栈之间切换</strong>即可。下图是三个任务按顺序切换的示意图：</p>
-<img src="/2024/04/14/OSCamp-D7-rCore-Chapter-2-3/task_context_switch.png" class="" title="任务切换">
+<p>用户栈与内核栈之间的切换在第二章已经实现，所以这里只需要实现<strong>任务的内核栈之间切换</strong>即可。</p>
 <h2 id="任务上下文"><a class="markdownIt-Anchor" href="#任务上下文"></a> 任务上下文</h2>
 <p>每个任务都有全局、静态、唯一的一个<code>TaskControlBlock</code>，其中有一个类型为<code>TaskContext</code>的字段，也就是<strong>任务上下文</strong>。要在任务之间切换，必须保存当前任务的上下文以便下次切换回来时恢复。</p>
 <p><strong>任务切换</strong>与<strong>内核栈和用户栈之间切换</strong>完全不是一个层次的概念。我非常担心读者会把<code>TaskContext</code>和第二章的<code>TrapContext</code>搞混，所以这一节我会尽可能细致的讲解，希望读者能深入思考并在脑海中模拟出<strong>从一个任务的用户态切换到另一个任务的用户态</strong>的所有细节。</p>
@@ -361,8 +368,6 @@
 <h2 id="第一个任务"><a class="markdownIt-Anchor" href="#第一个任务"></a> 第一个任务</h2>
 <p>一般情况下任务的切换都在前一个任务的内核栈上完成，那么怎么调度第一个任务呢？换言之，<code>__switch</code>函数第一次调用时，它的第一个参数传什么？</p>
 <p>请参见<code>src/task/mod.rs</code>的<code>run_first_task</code>函数，该函数被boot入口点<code>rust_main</code>调用，因此运行在boot栈上，它在boot栈上创建一个空的<code>_unused: TaskContext</code>，把它的指针作为参数传入第一个<code>__switch</code>表示&quot;当前任务&quot;。但<code>_unused</code>不在<code>TaskManager</code>中，所以不会被其他任务调度。</p>
-<p>到这里为止，可以给出一张更细致的图表来说明任务的切换：</p>
-<img src="/2024/04/14/OSCamp-D7-rCore-Chapter-2-3/task_swich_complete.png" class="" title="任务上下文的切换">
 <h2 id="分时多任务"><a class="markdownIt-Anchor" href="#分时多任务"></a> 分时多任务</h2>
 <p>以上的任务切换机制只能希望任务之间能主动礼让，分时多任务则规定了任务最长能占有多少CPU时间，超出规定时间就切换到下一个任务，当然用户程序也可以主动yield提前结束自己的时间片。</p>
 <p>机制十分简单：</p>
