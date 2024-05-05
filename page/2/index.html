@@ -23,7 +23,7 @@
     <meta name="description" content="数学和编程">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Qiu的博客">
-<meta property="og:url" content="https://qiu233.github.io/tags/Rust/index.html">
+<meta property="og:url" content="https://qiu233.github.io/page/2/index.html">
 <meta property="og:site_name" content="Qiu的博客">
 <meta property="og:description" content="数学和编程">
 <meta property="og:locale" content="zh_CN">
@@ -31,14 +31,14 @@
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://qiu233.github.io/tags/Rust/">
+<link rel="canonical" href="https://qiu233.github.io/page/2/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"tags/Rust/index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"page/2/index.html","title":""}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>标签: Rust | Qiu的博客</title>
+<title>Qiu的博客</title>
   
 
 
@@ -71,7 +71,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <p class="site-title">Qiu的博客</p>
+      <h1 class="site-title">Qiu的博客</h1>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -148,232 +148,116 @@
 
     </div>
 
-    <div class="main-inner tag posts-collapse">
+    <div class="main-inner index posts-expand">
+
+    
 
 
+<div class="post-block">
   
   
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://qiu233.github.io/2024/04/08/OSCamp-D0-%E5%BA%8F%E8%A8%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Qiu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Qiu的博客">
+      <meta itemprop="description" content="数学和编程">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Qiu的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/04/08/OSCamp-D0-%E5%BA%8F%E8%A8%80/" class="post-title-link" itemprop="url">OSCamp D0-序言</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-04-08 00:00:00" itemprop="dateCreated datePublished" datetime="2024-04-08T00:00:00+08:00">2024-04-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-04-20 21:38:28" itemprop="dateModified" datetime="2024-04-20T21:38:28+08:00">2024-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/OSCamp/" itemprop="url" rel="index"><span itemprop="name">OSCamp</span></a>
+        </span>
+    </span>
+
   
-  <div class="post-block">
-    <div class="post-content">
-      <div class="collection-title">
-        <h1 class="collection-header">Rust
-          <small>标签</small>
-        </h1>
-      </div>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="声明"><a class="markdownIt-Anchor" href="#声明"></a> 声明</h1>
+<blockquote>
+<p>本博客有关清华大学2024年春夏季开源操作系统训练营之系列文章仅供参考及学习用途。</p>
+<p><strong>告读者：学术不端是<a target="_blank" rel="noopener" href="https://learningos.cn/rCore-Tutorial-Guide-2024S/honorcode.html">荣誉准则</a>所明令禁止的行为！</strong></p>
+<p>因此我不会在文章中放具体的、能直接照搬的实现代码，仅关注原仓库的代码理解或实验思路。读者可自由引用文章作为参考资料，但我作为作者和参与训练营的学生，除第一阶段(rustlings)内容以外，绝不承认与任何其他参与者存在私下交流或合作。</p>
+<p>作为作者，我保证本系列文章：</p>
+<ul>
+<li>皆遵守<a target="_blank" rel="noopener" href="https://learningos.cn/rCore-Tutorial-Guide-2024S/honorcode.html">荣誉准则</a>。</li>
+<li>皆由我一人独自完成。</li>
+<li>未使用任何形式的AI生成的代码。</li>
+</ul>
+<p>若事实与我所说不符，我愿承担其导致的一切责任。</p>
+</blockquote>
+<h1 id="序言"><a class="markdownIt-Anchor" href="#序言"></a> 序言</h1>
+<p>这是我第一次参加校外计算机相关的活动，我的目标是在接下来的考核中取得优胜，<strong>并获得今年七八月的线下实习机会</strong>。</p>
+<p>关于我自己：</p>
+<ul>
+<li>我最喜欢的编程语言是Lean4和Haskell</li>
+<li>我最感兴趣的方向是类型论和逻辑，其次是编程语言及其实现，再次是操作系统</li>
+<li>我最擅长的技能是函数式编程</li>
+</ul>
+<p><em>待补充</em></p>
 
       
-    <div class="collection-year">
-      <span class="collection-header">2024</span>
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2024-05-05T20:44:51+08:00"
-              content="2024-05-05">
-          05-05
-        </time>
-      </div>
+    
+    
+    
 
-      <div class="post-title">
-        <a class="post-title-link" href="/2024/05/05/OSCamp-D28-rCore-Chapter-5-%E5%A4%9A%E6%A0%B8/" itemprop="url">
-          <span itemprop="name">OSCamp D28-rCore Chapter 5-多核</span>
-        </a>
-      </div>
-
+    <footer class="post-footer">
+        <div class="post-eof"></div>
       
-    </header>
+    </footer>
   </article>
+</div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2024-05-05T19:53:57+08:00"
-              content="2024-05-05">
-          05-05
-        </time>
-      </div>
 
-      <div class="post-title">
-        <a class="post-title-link" href="/2024/05/05/OSCamp-D28-rCore-Chapter-8/" itemprop="url">
-          <span itemprop="name">OSCamp D28-rCore Chapter 8</span>
-        </a>
-      </div>
 
-      
-    </header>
-  </article>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2024-04-25T06:01:14+08:00"
-              content="2024-04-25">
-          04-25
-        </time>
-      </div>
-
-      <div class="post-title">
-        <a class="post-title-link" href="/2024/04/25/OSCamp-D18-rCore-Chapter-6-Structure/" itemprop="url">
-          <span itemprop="name">OSCamp D18-rCore Chapter 6-Structure</span>
-        </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2024-04-20T21:04:38+08:00"
-              content="2024-04-20">
-          04-20
-        </time>
-      </div>
-
-      <div class="post-title">
-        <a class="post-title-link" href="/2024/04/20/OSCamp-D13-rCore-Chapter-5-Glance/" itemprop="url">
-          <span itemprop="name">OSCamp D13-rCore Chapter 5-Glance</span>
-        </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2024-04-20T17:50:33+08:00"
-              content="2024-04-20">
-          04-20
-        </time>
-      </div>
-
-      <div class="post-title">
-        <a class="post-title-link" href="/2024/04/20/OSCamp-D13-rCore-Chapter-4-Lazy%E5%AE%9E%E7%8E%B0%E3%80%81mmap%E5%8F%8A%E6%94%B6%E5%B0%BE/" itemprop="url">
-          <span itemprop="name">OSCamp D13-rCore Chapter 4-Lazy实现、mmap及收尾</span>
-        </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2024-04-16T12:14:07+08:00"
-              content="2024-04-16">
-          04-16
-        </time>
-      </div>
-
-      <div class="post-title">
-        <a class="post-title-link" href="/2024/04/16/OSCamp-D9-rCore-Chapter-4-Code-Comprehension/" itemprop="url">
-          <span itemprop="name">OSCamp D9-rCore-Chapter 4-Code Comprehension</span>
-        </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2024-04-15T14:23:31+08:00"
-              content="2024-04-15">
-          04-15
-        </time>
-      </div>
-
-      <div class="post-title">
-        <a class="post-title-link" href="/2024/04/15/OSCamp-D8-rCore-Chapter-4-Address-Translation/" itemprop="url">
-          <span itemprop="name">OSCamp D8-rCore-Chapter 4-Address Translation</span>
-        </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2024-04-14T09:43:47+08:00"
-              content="2024-04-14">
-          04-14
-        </time>
-      </div>
-
-      <div class="post-title">
-        <a class="post-title-link" href="/2024/04/14/OSCamp-D7-rCore-Chapter-2-3/" itemprop="url">
-          <span itemprop="name">OSCamp D7-rCore Chapter 2&3</span>
-        </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2024-04-10T02:54:10+08:00"
-              content="2024-04-10">
-          04-10
-        </time>
-      </div>
-
-      <div class="post-title">
-        <a class="post-title-link" href="/2024/04/10/OSCamp-D2-rCore-Chapter-1-Glance/" itemprop="url">
-          <span itemprop="name">OSCamp D2-rCore Chapter 1-Glance</span>
-        </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2024-04-09T04:57:27+08:00"
-              content="2024-04-09">
-          04-09
-        </time>
-      </div>
-
-      <div class="post-title">
-        <a class="post-title-link" href="/2024/04/09/OSCamp-D1-1-Rustlings/" itemprop="url">
-          <span itemprop="name">OSCamp D1-Rustlings</span>
-        </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-    </div>
-  </div>
-  
-  
-  
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/tags/Rust/page/2/">2</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/tags/Rust/page/2/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
   </nav>
 
 </div>
