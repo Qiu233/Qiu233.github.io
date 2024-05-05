@@ -122,7 +122,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -132,7 +132,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -149,6 +149,199 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://qiu233.github.io/2024/05/05/OSCamp-D28-rCore-Chapter-8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Qiu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Qiu的博客">
+      <meta itemprop="description" content="数学和编程">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Qiu的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/05/05/OSCamp-D28-rCore-Chapter-8/" class="post-title-link" itemprop="url">OSCamp D28-rCore Chapter 8</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-05-05 19:53:57 / 修改时间：20:43:09" itemprop="dateCreated datePublished" datetime="2024-05-05T19:53:57+08:00">2024-05-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/OSCamp/" itemprop="url" rel="index"><span itemprop="name">OSCamp</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>第八章的内容是同步，分为两个方面：</p>
+<ul>
+<li>临界区域(Critical Section)：只允许一个或少数几个线程访问的代码块。</li>
+<li>锁：限制访问的工具，有三种：</li>
+</ul>
+<ol>
+<li>Mutex：互斥锁，只允许获取一次，其他获取必须等待上一个获取者释放。</li>
+<li>Semaphore：信号量，相当于最多允许有限次获取的互斥锁，超出这个数量则需等待。</li>
+<li>CondVar：条件变量，和锁一起使用，用于等待某个条件达成。</li>
+</ol>
+<p>代码中实现的互斥锁有两种：</p>
+<ul>
+<li>MutexSpin：自旋锁，线程如果无法获取锁会直接回到调度队列等待下次调度。</li>
+<li>MutexBlocking：阻塞锁，线程如果无法获取锁会将自身状态设置为Blocking，直到锁的持有者释放时，<code>wakeup_task</code>会将等待队列中的线程唤醒并加入调度队列。</li>
+</ul>
+<p>条件变量我的理解还不是很清楚，一句话描述大概是：</p>
+<blockquote>
+<p>用同一个互斥锁在两个线程间实现<strong>状态</strong>的同步。</p>
+</blockquote>
+<p>条件变量等待时会将之前获取的互斥锁释放，并阻塞自身。当某个线程将状态(例如某个变量)改变时，会调用signal函数将阻塞的线程唤醒，被唤醒的线程会立刻获得锁。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/05/05/OSCamp-D28-rCore-Chapter-8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://qiu233.github.io/2024/04/25/OSCamp-D18-rCore-Chapter-6-Structure/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Qiu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Qiu的博客">
+      <meta itemprop="description" content="数学和编程">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Qiu的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/04/25/OSCamp-D18-rCore-Chapter-6-Structure/" class="post-title-link" itemprop="url">OSCamp D18-rCore Chapter 6-Structure</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-04-25 06:01:14 / 修改时间：07:43:56" itemprop="dateCreated datePublished" datetime="2024-04-25T06:01:14+08:00">2024-04-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/OSCamp/" itemprop="url" rel="index"><span itemprop="name">OSCamp</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>第五章的内容之后有时间再补充，我只做了fork的COW和多核(core)支持，其他调度算法没做，因为主要是苦力活、分值少、还浪费时间。</p>
+<p>第二阶段就要开始了，时间紧迫，容不得我慢慢写博客，接下来必须提速。我必须在第三阶段结束前自己从头实现一个内核。</p>
+<p>这一篇文章目的是整理easyfs的结构，主要是理论知识。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/04/25/OSCamp-D18-rCore-Chapter-6-Structure/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -176,7 +369,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/04/20/OSCamp-D13-rCore-Chapter-5-Glance/" class="post-title-link" itemprop="url">OSCamp D14-rCore Chapter 5-Glance</a>
+          <a href="/2024/04/20/OSCamp-D13-rCore-Chapter-5-Glance/" class="post-title-link" itemprop="url">OSCamp D13-rCore Chapter 5-Glance</a>
         </h2>
 
         <div class="post-meta-container">
@@ -194,7 +387,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-04-23 23:51:32" itemprop="dateModified" datetime="2024-04-23T23:51:32+08:00">2024-04-23</time>
+      <time title="修改时间：2024-04-25 06:01:23" itemprop="dateModified" datetime="2024-04-25T06:01:23+08:00">2024-04-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -269,7 +462,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/04/20/OSCamp-D13-rCore-Chapter-4-Lazy%E5%AE%9E%E7%8E%B0%E3%80%81mmap%E5%8F%8A%E6%94%B6%E5%B0%BE/" class="post-title-link" itemprop="url">OSCamp D14-rCore Chapter 4-Lazy实现、mmap及收尾</a>
+          <a href="/2024/04/20/OSCamp-D13-rCore-Chapter-4-Lazy%E5%AE%9E%E7%8E%B0%E3%80%81mmap%E5%8F%8A%E6%94%B6%E5%B0%BE/" class="post-title-link" itemprop="url">OSCamp D13-rCore Chapter 4-Lazy实现、mmap及收尾</a>
         </h2>
 
         <div class="post-meta-container">
@@ -287,7 +480,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-04-23 23:48:10" itemprop="dateModified" datetime="2024-04-23T23:48:10+08:00">2024-04-23</time>
+      <time title="修改时间：2024-04-25 06:00:02" itemprop="dateModified" datetime="2024-04-25T06:00:02+08:00">2024-04-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
